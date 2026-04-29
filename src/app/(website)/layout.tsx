@@ -1,5 +1,6 @@
 "use client";
 
+// PaisaAds Website Layout
 import type React from "react";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar";
