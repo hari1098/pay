@@ -1,5 +1,5 @@
 "use client";
-
+// PaisaAds Homepage
 import api from "@/lib/api";
 import { PosterAd } from "@/lib/types/posterAd";
 import { useQueries } from "@tanstack/react-query";
