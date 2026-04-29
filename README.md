@@ -143,26 +143,60 @@ paisaads/frontend/
 └── tsconfig.json               # TypeScript configuration
 ```
 
+## Quick Start (Run Locally)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/hari1098/pay.git
+cd pay
+
+# 2. Install dependencies (use --legacy-peer-deps if you get conflicts)
+npm install --legacy-peer-deps
+
+# 3. Create .env.local file with your configuration
+cp .env.example .env.local
+# Edit .env.local with your database credentials
+
+# 4. Start the development server
+npm run dev
+
+# 5. Open http://localhost:3000 in your browser
+```
+
 ## Development Setup
 
 ### Prerequisites
-- Node.js 20+ (LTS recommended)
-- npm, yarn, pnpm, or bun package manager
-- Backend API running (see backend repository)
+- Node.js 18+ (LTS recommended, v20+ preferred)
+- npm v9+ (or yarn/pnpm/bun)
+- PostgreSQL 14+ (for backend database)
+- MongoDB 6+ (optional, for backend)
+- Backend API running on port 3001
 
 ### Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env.local` file in the root directory:
 
 ```bash
-# API Configuration
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
+# Frontend Configuration
+NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
-# JWT Secret (must match backend)
-JWT_SECRET=your_jwt_secret_key
-
-# Other configurations as needed
+# Backend Configuration (for reference - use in backend .env)
+NODE_ENV=development
+PORT=3001
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=HEROsprint@123
+DB_NAME=paisaads
+MONGODB_URI=mongodb://localhost:27017/paisaads
+JWT_SECRET=9a4f2c8d3b7a1e6f4g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d
+JWT_EXPIRATION=7d
+SMS_API_KEY=your_sms_api_key
+SMS_SENDER_ID=your_sender_id
+MAX_FILE_SIZE=10485760
+UPLOAD_PATH=./uploads
+ALLOWED_ORIGINS=http://localhost:3000,https://paisaads.in
 ```
 
 ### Installation
@@ -488,6 +522,59 @@ API calls are abstracted in service modules:
 - Toast notifications for user feedback
 - Automatic token refresh handling
 - Graceful fallbacks for failed requests
+
+## Troubleshooting
+
+### Dependency Conflicts (ERESOLVE)
+
+If you see peer dependency errors during install:
+
+```bash
+# Solution 1: Use legacy peer deps
+npm install --legacy-peer-deps
+
+# Solution 2: Clear cache and reinstall
+rm -rf node_modules package-lock.json
+npm install --legacy-peer-deps
+```
+
+### "next: command not found"
+
+```bash
+# Reinstall dependencies
+npm install --legacy-peer-deps
+
+# Or install Next.js globally (not recommended)
+npm install -g next
+```
+
+### Port Already in Use
+
+```bash
+# Kill process on port 3000
+npx kill-port 3000
+
+# Or run on different port
+npm run dev -- -p 3001
+```
+
+### Backend Connection Issues (0 ads showing)
+
+1. Ensure backend is running on port 3001
+2. Check PostgreSQL is running: `pg_isready -h localhost -p 5432`
+3. Verify database exists: `psql -U postgres -c "\\l" | grep paisaads`
+4. Check `.env.local` has correct `NEXT_PUBLIC_API_URL=http://localhost:3001`
+
+### TypeScript/Build Errors
+
+```bash
+# Check for type errors
+npm run lint
+
+# Clear Next.js cache
+rm -rf .next
+npm run dev
+```
 
 ## Contributing
 
