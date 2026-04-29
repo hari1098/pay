@@ -16,7 +16,7 @@ import api from "@/lib/api";
 import { LineAd } from "@/lib/types/lineAd";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircle, Search, X } from "lucide-react";
+import { CircleAlert as AlertCircle, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CitySelect, StateSelect } from "react-country-state-city";

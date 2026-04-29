@@ -36,7 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CreditCard, Loader2, Upload } from "lucide-react";
+import { CreditCard, Loader as Loader2, Upload } from "lucide-react";
 import api from "@/lib/api";
 import { AdType } from "@/lib/enum/ad-type";
 

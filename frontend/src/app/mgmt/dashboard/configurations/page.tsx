@@ -9,16 +9,7 @@ import SearchSloganConfig from "./search-slogan/page";
 import FaqConfig from "./faq/page";
 import ContactPageConfig from "./contact-page/page";
 import TermsConditionsConfig from "./tc/page";
-import { 
-  DollarSign, 
-  Shield, 
-  Search, 
-  Users, 
-  HelpCircle, 
-  Phone, 
-  FileText,
-  Settings
-} from "lucide-react";
+import { DollarSign, Shield, Search, Users, Circle as HelpCircle, Phone, FileText, Settings } from "lucide-react";
 
 export default function ConfigurationsPage() {
   const [activeTab, setActiveTab] = useState("ad-pricing");

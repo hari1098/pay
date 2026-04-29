@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/api";
 import { AdStatus } from "@/lib/enum/ad-status";
 import { useQuery } from "@tanstack/react-query";
-import { XCircle } from "lucide-react";
+import { Circle as XCircle } from "lucide-react";
 import { columns } from "./columns";
 
 export default function RejectedVideoAdsPage() {

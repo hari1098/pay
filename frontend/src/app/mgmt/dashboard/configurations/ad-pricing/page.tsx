@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { IndianRupee, Save, History, TrendingUp, AlertCircle } from "lucide-react";
+import { IndianRupee, Save, History, TrendingUp, CircleAlert as AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import api from "@/lib/api";

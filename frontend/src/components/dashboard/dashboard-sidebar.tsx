@@ -4,21 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Role } from "@/lib/enum/roles.enum";
-import {
-  LayoutDashboard,
-  BarChart3,
-  Tag,
-  Gift,
-  Settings,
-  FileText,
-  CheckCircle,
-  ChevronDown,
-  ChevronRight,
-  Video,
-  ImageIcon,
-  Menu,
-  X,
-} from "lucide-react";
+import { LayoutDashboard, ChartBar as BarChart3, Tag, Gift, Settings, FileText, CircleCheck as CheckCircle, ChevronDown, ChevronRight, Video, Image as ImageIcon, Menu, X } from "lucide-react";
 
 interface ManagementSidebarProps {
   pathname: string;

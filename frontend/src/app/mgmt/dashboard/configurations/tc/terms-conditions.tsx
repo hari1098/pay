@@ -13,27 +13,7 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import {
-  Bold,
-  Italic,
-  UnderlineIcon,
-  Strikethrough,
-  List,
-  ListOrdered,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignJustify,
-  Heading1,
-  Heading2,
-  Heading3,
-  LinkIcon,
-  Quote,
-  Code,
-  Minus,
-  X,
-  Save,
-} from "lucide-react";
+import { Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, ChevronLeft as AlignLeft, TextAlignCenter as AlignCenter, Highlighter as AlignRight, TextAlignJustify as AlignJustify, Heading1, Heading2, Heading3, Link as LinkIcon, Quote, Code, Minus, X, Save } from "lucide-react";
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";

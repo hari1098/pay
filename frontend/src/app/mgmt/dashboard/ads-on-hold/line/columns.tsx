@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getStatusVariant, truncateContent } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Eye, Edit, FileImage, Calendar } from "lucide-react";
+import { ArrowUpDown, Eye, CreditCard as Edit, FileImage, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import type { LineAd } from "@/lib/types/lineAd";

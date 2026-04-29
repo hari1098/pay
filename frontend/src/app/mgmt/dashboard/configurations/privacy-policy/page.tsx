@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Save, History, Calendar, AlertCircle } from "lucide-react";
+import { Shield, Save, History, Calendar, CircleAlert as AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import api from "@/lib/api";

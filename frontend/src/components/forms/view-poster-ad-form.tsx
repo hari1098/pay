@@ -8,17 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  AlertCircle,
-  ArrowLeft,
-  Calendar,
-  ImageIcon,
-  MapPin,
-  Phone,
-  PhoneCall,
-  Tag,
-  UserIcon,
-} from "lucide-react";
+import { CircleAlert as AlertCircle, ArrowLeft, Calendar, Image as ImageIcon, MapPin, Phone, PhoneCall, Tag, User as UserIcon } from "lucide-react";
 import api from "@/lib/api";
 import Zoom from "react-medium-image-zoom";
 import { PosterAd } from "@/lib/types/posterAd";

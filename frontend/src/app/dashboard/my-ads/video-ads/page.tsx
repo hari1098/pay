@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { CirclePlus as PlusCircle } from "lucide-react";
 import Link from "next/link";
 import MyAdsDataTable from "./my-ads-table";
 

@@ -7,7 +7,7 @@ import api from "@/lib/api";
 import { AdStatus } from "@/lib/enum/ad-status";
 import { LineAd } from "@/lib/types/lineAd";
 import { useQuery } from "@tanstack/react-query";
-import { XCircle } from "lucide-react";
+import { Circle as XCircle } from "lucide-react";
 import { columns } from "./columns";
 
 export default function RejectedLineAdsPage() {

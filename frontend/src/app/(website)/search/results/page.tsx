@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import PosterVideoAdSides from "../../components/poster-video-ad-sides";
 import LineAdsWithPagination from "./line-ads-with-pagination";
 import QuickSearchBar from "./quick-search";
-import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
+import { CircleChevronLeft as ChevronLeftCircle, CircleChevronRight as ChevronRightCircle } from "lucide-react";
 
 export default function SearchResultsPage() {
   const [categoryId, setCategoryId] = useState("");

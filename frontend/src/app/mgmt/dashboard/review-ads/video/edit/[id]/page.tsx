@@ -49,25 +49,7 @@ import {
 } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isValid } from "date-fns";
-import {
-  AlertCircle,
-  ArrowLeft,
-  Calendar,
-  CalendarIcon,
-  Check,
-  Clock,
-  FileText,
-  VideoIcon,
-  Loader2,
-  MapPin,
-  MessageSquare,
-  Save,
-  Tag,
-  X,
-  CreditCard,
-  UserIcon,
-  Phone,
-} from "lucide-react";
+import { CircleAlert as AlertCircle, ArrowLeft, Calendar, Calendar as CalendarIcon, Check, Clock, FileText, Video as VideoIcon, Loader as Loader2, MapPin, MessageSquare, Save, Tag, X, CreditCard, User as UserIcon, Phone } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useAdNavigation } from "@/hooks/useAdNavigation";
 import type React from "react";

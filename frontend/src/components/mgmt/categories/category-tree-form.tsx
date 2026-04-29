@@ -1,7 +1,7 @@
 "use client";
 
 import { useFieldArray, type UseFormReturn } from "react-hook-form";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { CirclePlus as PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,

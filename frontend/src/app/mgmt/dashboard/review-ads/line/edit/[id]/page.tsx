@@ -48,27 +48,7 @@ import {
 } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isValid } from "date-fns";
-import {
-  AlertCircle,
-  ArrowLeft,
-  Calendar,
-  CalendarIcon,
-  Check,
-  Clock,
-  CreditCard,
-  FileText,
-  ImageIcon,
-  Loader2,
-  MapPin,
-  MessageSquare,
-  Phone,
-  Save,
-  Tag,
-  UserIcon,
-  X,
-  Layout,
-  Monitor,
-} from "lucide-react";
+import { CircleAlert as AlertCircle, ArrowLeft, Calendar, Calendar as CalendarIcon, Check, Clock, CreditCard, FileText, Image as ImageIcon, Loader as Loader2, MapPin, MessageSquare, Phone, Save, Tag, User as UserIcon, X, LayoutGrid as Layout, Monitor } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useAdNavigation } from "@/hooks/useAdNavigation";
 import type React from "react";

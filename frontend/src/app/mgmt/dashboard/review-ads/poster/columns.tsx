@@ -4,15 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getStatusVariant, truncateContent } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  Check,
-  X,
-  Eye,
-  Edit,
-  FileImage,
-  Calendar,
-} from "lucide-react";
+import { ArrowUpDown, Check, X, Eye, CreditCard as Edit, FileImage, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import Image from "next/image";

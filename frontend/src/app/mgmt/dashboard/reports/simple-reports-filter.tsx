@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, FilterIcon, XIcon } from "lucide-react";
+import { Calendar as CalendarIcon, ListFilter as FilterIcon, Bone as XIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { AdStatus } from "@/lib/enum/ad-status";

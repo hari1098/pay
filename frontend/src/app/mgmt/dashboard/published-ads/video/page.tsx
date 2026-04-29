@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/api";
 import { AdStatus } from "@/lib/enum/ad-status";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle } from "lucide-react";
+import { CircleCheck as CheckCircle } from "lucide-react";
 import { columns } from "./columns";
 
 export default function ReviewVideoAdsPage() {

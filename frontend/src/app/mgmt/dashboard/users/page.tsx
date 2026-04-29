@@ -22,7 +22,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoveHorizontal as MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -18,16 +18,7 @@ import {
 import api from "@/lib/api";
 import { Role } from "@/lib/enum/roles.enum";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  ChevronDown,
-  LayoutDashboard,
-  Loader2,
-  LogOut,
-  Settings,
-  UserIcon,
-  Menu,
-  X,
-} from "lucide-react";
+import { ChevronDown, LayoutDashboard, Loader as Loader2, LogOut, Settings, User as UserIcon, Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";

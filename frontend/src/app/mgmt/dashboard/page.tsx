@@ -2,18 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  BarChart3,
-  FileText,
-  Users,
-  TrendingUp,
-  Eye,
-  Clock,
-  Image,
-  Video,
-  List,
-  CheckCircle2,
-} from "lucide-react";
+import { ChartBar as BarChart3, FileText, Users, TrendingUp, Eye, Clock, Image, Video, List, CircleCheck as CheckCircle2 } from "lucide-react";
 import { useDashboardData } from "./layout";
 import { StatusDistributionChart } from "@/components/mgmt/stat-distribution-chart";
 import { RecentAdsList } from "@/components/mgmt/recent-ad-list";

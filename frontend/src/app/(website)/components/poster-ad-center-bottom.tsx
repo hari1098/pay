@@ -1,5 +1,5 @@
 import { PosterAd } from "@/lib/types/posterAd";
-import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
+import { CircleChevronLeft as ChevronLeftCircle, CircleChevronRight as ChevronRightCircle } from "lucide-react";
 import { useState } from "react";
 
 export default function PosterAdCenterBottom({

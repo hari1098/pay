@@ -19,14 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Grid,
-  Filter,
-  Layout,
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-} from "lucide-react";
+import { Grid2x2 as Grid, ListFilter as Filter, LayoutGrid as Layout, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import AdSlotsApi from "@/lib/services/ad-slots-api";
 import {
   DateBasedAdSlotsOverview,

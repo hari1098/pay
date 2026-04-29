@@ -9,7 +9,7 @@ import { UserReports } from "./user-reports";
 import { AdminReports } from "./admin-reports";
 import { ListingReports } from "./listing-reports";
 import { PaymentReports } from "./payment-reports";
-import { BarChart3, Users, UserCheck, FileText, CreditCard } from "lucide-react";
+import { ChartBar as BarChart3, Users, UserCheck, FileText, CreditCard } from "lucide-react";
 
 export interface ReportsFilters {
   adType: string;

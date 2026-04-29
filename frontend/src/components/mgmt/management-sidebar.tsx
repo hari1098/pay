@@ -4,23 +4,7 @@ import type React from "react";
 
 import { Role } from "@/lib/enum/roles.enum";
 import { cn } from "@/lib/utils";
-import {
-  BarChart3,
-  CheckCircle,
-  ChevronDown,
-  ChevronRight,
-  Clock,
-  FileText,
-  Gift,
-  Grid,
-  ImageIcon,
-  LayoutDashboard,
-  Settings,
-  Tag,
-  UsersIcon,
-  Video,
-  XCircle,
-} from "lucide-react";
+import { ChartBar as BarChart3, CircleCheck as CheckCircle, ChevronDown, ChevronRight, Clock, FileText, Gift, Grid2x2 as Grid, Image as ImageIcon, LayoutDashboard, Settings, Tag, Users as UsersIcon, Video, Circle as XCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 

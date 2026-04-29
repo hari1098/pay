@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { HelpCircle, Save, Plus, Trash2, Eye, AlertCircle, ArrowUp, ArrowDown, Tag } from "lucide-react";
+import { Circle as HelpCircle, Save, Plus, Trash2, Eye, CircleAlert as AlertCircle, ArrowUp, ArrowDown, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import api from "@/lib/api";

@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Upload, Check, X, ImageIcon, RefreshCw } from 'lucide-react'
+import { Upload, Check, X, Image as ImageIcon, RefreshCw } from 'lucide-react'
 
 interface ImageUploadProps {
   onImageSelect: (file: File) => void

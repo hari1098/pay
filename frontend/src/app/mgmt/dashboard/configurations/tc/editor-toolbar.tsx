@@ -1,26 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Bold,
-  Italic,
-  UnderlineIcon,
-  Strikethrough,
-  List,
-  ListOrdered,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignJustify,
-  Heading1,
-  Heading2,
-  Heading3,
-  LinkIcon,
-  Quote,
-  Code,
-  Minus,
-  X,
-} from "lucide-react";
+import { Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, ChevronLeft as AlignLeft, TextAlignCenter as AlignCenter, Highlighter as AlignRight, TextAlignJustify as AlignJustify, Heading1, Heading2, Heading3, Link as LinkIcon, Quote, Code, Minus, X } from "lucide-react";
 import { Editor } from "@tiptap/react";
 
 interface EditorToolbarProps {

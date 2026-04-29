@@ -4,7 +4,7 @@ import type { PosterAd } from "@/lib/types/posterAd";
 import type { VideoAd } from "@/lib/types/videoAd";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../ui/skeleton";
-import { AlertCircle, CalendarIcon, ImageIcon, Loader2, X } from "lucide-react";
+import { CircleAlert as AlertCircle, Calendar as CalendarIcon, Image as ImageIcon, Loader as Loader2, X } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
 import { useForm } from "react-hook-form";
 import { adFormSchema, AdFormValues } from "./ad-fields";

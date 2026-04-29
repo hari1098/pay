@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Search, X, MapPin, Filter } from "lucide-react";
+import { Search, X, MapPin, ListFilter as Filter } from "lucide-react";
 import {
   CountrySelect,
   StateSelect,

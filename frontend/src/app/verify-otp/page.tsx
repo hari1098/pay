@@ -3,7 +3,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Loader2, LogOut } from "lucide-react";
+import { Loader as Loader2, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
 import { User } from "@/lib/types/user";

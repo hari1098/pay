@@ -4,18 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/api";
-import {
-  BarChart2,
-  CheckCircle2,
-  FileText,
-  Eye,
-  PauseCircle,
-  XCircle,
-  Image,
-  List,
-  Clock,
-  Video,
-} from "lucide-react";
+import { ChartBar as BarChart2, CircleCheck as CheckCircle2, FileText, Eye, CirclePause as PauseCircle, Circle as XCircle, Image, List, Clock, Video } from "lucide-react";
 
 interface DashboardStats {
   totalAds: number;

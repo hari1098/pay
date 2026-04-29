@@ -11,21 +11,7 @@ import { AdType } from "@/lib/enum/ad-type";
 import { formatOrderId, getStatusVariant } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import {
-  AlertCircle,
-  ArrowLeft,
-  Calendar,
-  CreditCard,
-  Edit,
-  FileText,
-  Mail,
-  MapPin,
-  Phone,
-  Tag,
-  User,
-  Layout,
-  Monitor,
-} from "lucide-react";
+import { CircleAlert as AlertCircle, ArrowLeft, Calendar, CreditCard, CreditCard as Edit, FileText, Mail, MapPin, Phone, Tag, User, LayoutGrid as Layout, Monitor } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";

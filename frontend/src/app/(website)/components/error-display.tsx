@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { CircleAlert as AlertCircle } from "lucide-react";
 
 export const ErrorDisplay = ({ onRetry }: { onRetry: () => void }) => (
   <div className="flex flex-col items-center justify-center p-8 text-center">

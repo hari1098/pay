@@ -1,13 +1,5 @@
 "use client";
-import {
-  Plus,
-  ChevronRight,
-  ChevronDown,
-  Edit,
-  Trash,
-  MoreHorizontal,
-  Power,
-} from "lucide-react";
+import { Plus, ChevronRight, ChevronDown, CreditCard as Edit, Trash, MoveHorizontal as MoreHorizontal, Power } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 

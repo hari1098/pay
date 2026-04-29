@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Save, Eye, AlertCircle, Building, Mail, MapPin, Clock, Globe, Plus, Trash2 } from "lucide-react";
+import { Phone, Save, Eye, CircleAlert as AlertCircle, Building, Mail, MapPin, Clock, Globe, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import api from "@/lib/api";

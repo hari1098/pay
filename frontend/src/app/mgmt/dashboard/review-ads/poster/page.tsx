@@ -15,7 +15,7 @@ import api from "@/lib/api";
 import { AdStatus } from "@/lib/enum/ad-status";
 import { LineAd } from "@/lib/types/lineAd";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, CheckCircle } from "lucide-react";
+import { TriangleAlert as AlertTriangle, CircleCheck as CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";

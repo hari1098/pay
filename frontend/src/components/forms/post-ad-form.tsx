@@ -39,7 +39,7 @@ import { AdPositionSelector } from "./ad-position-selector";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { format, set } from "date-fns";
-import { CalendarIcon, ImageIcon, Loader2, X } from "lucide-react";
+import { Calendar as CalendarIcon, Image as ImageIcon, Loader as Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CitySelect, StateSelect } from "react-country-state-city";

@@ -12,7 +12,7 @@ import { VideoAd } from "@/lib/types/videoAd";
 import { getStatusVariant } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { ArrowUpDown, Edit, Eye, Calendar } from "lucide-react";
+import { ArrowUpDown, CreditCard as Edit, Eye, Calendar } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Zoom from "react-medium-image-zoom";

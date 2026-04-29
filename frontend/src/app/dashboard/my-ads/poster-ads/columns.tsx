@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getStatusVariant } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Check, X, Eye, Edit } from "lucide-react";
+import { ArrowUpDown, Check, X, Eye, CreditCard as Edit } from "lucide-react";
 import { format } from "date-fns";
 import { PaymentDialog } from "@/components/payment/payment-dialog";
 import { PaymentDetailsDialog } from "@/components/payment/payment-details-dialog";

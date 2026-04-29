@@ -8,7 +8,7 @@ import { AdStatus } from "@/lib/enum/ad-status";
 import { LineAd } from "@/lib/types/lineAd";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CheckCircle } from "lucide-react";
+import { CircleCheck as CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { columns } from "./columns";

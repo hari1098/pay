@@ -11,7 +11,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { HelpCircle, Mail, Phone, Filter, X } from "lucide-react";
+import { Circle as HelpCircle, Mail, Phone, ListFilter as Filter, X } from "lucide-react";
 import api from "@/lib/api";
 
 export default function FAQPage() {

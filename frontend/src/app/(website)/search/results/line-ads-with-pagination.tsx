@@ -9,7 +9,7 @@ import api from "@/lib/api";
 import { LineAd } from "@/lib/types/lineAd";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircle, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { CircleAlert as AlertCircle, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import LineAdCard from "../../components/line-ad/line-ad-card";

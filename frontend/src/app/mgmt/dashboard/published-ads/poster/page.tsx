@@ -14,7 +14,7 @@ import api from "@/lib/api";
 import { AdStatus } from "@/lib/enum/ad-status";
 import { LineAd } from "@/lib/types/lineAd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle } from "lucide-react";
+import { CircleCheck as CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { columns } from "./columns";

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { getStatusVariant } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Eye, Edit, Calendar } from "lucide-react";
+import { ArrowUpDown, Eye, CreditCard as Edit, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import Image from "next/image";
