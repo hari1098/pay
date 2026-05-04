@@ -46,6 +46,7 @@ export default function RegisterLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // v0: Website layout with dynamic footer
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
