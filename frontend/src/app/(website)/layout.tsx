@@ -53,7 +53,7 @@ export default function RegisterLayout({
       try {
         const response = await fetch(
           `${
-            process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+            process.env.NEXT_PUBLIC_API_URL || "https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/paisaads-api"
           }/configurations/contact-page`
         );
         if (response.ok) {
