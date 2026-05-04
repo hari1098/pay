@@ -1,0 +1,176 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    PAISAADS - DOWNLOAD AND RUN GUIDE                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+YOUR COMPLETE PROJECT IS READY! 🎉
+
+All you need to do is:
+1. Download the entire 'pay' folder
+2. Follow these simple steps
+3. Everything else is already set up!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📥 WHAT'S INCLUDED IN YOUR DOWNLOAD
+
+✅ Frontend Folder (Next.js 15)
+   - All source code (src/)
+   - All configuration files
+   - 544 npm packages already installed (651 MB)
+   - Ready to run!
+
+✅ Backend Folder (NestJS)
+   - All source code (src/)
+   - All configuration files
+   - 1080 npm packages already installed (458 MB)
+   - Ready to run!
+
+✅ Documentation Files
+   - GET_STARTED.md (Start here!)
+   - INSTALLATION_GUIDE.md (Detailed setup)
+   - start.sh (Auto-start for Mac/Linux)
+   - start.bat (Auto-start for Windows)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 QUICK START (3 STEPS)
+
+STEP 1: Install Prerequisites (One Time)
+  - Node.js 18+ : https://nodejs.org/
+  - PostgreSQL 14+ : https://www.postgresql.org/download/
+  
+STEP 2: Create Database (One Time)
+  psql -U postgres
+  CREATE DATABASE paisaads;
+  \q
+
+STEP 3: Run Everything
+  
+  Option A - Automatic (Easiest):
+    Mac/Linux: ./start.sh
+    Windows:   start.bat
+  
+  Option B - Manual:
+    Terminal 1: cd backend && npm run dev
+    Terminal 2: cd frontend && npm run dev
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 OPEN YOUR BROWSER
+
+  Frontend: http://localhost:3000
+  Backend:  http://localhost:3002
+
+That's it! Your full-stack application is running! 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 FILE STRUCTURE
+
+pay/
+├── frontend/               # React/Next.js Frontend
+│   ├── src/              # Source code
+│   ├── public/           # Images, fonts, etc
+│   ├── node_modules/     # 651 MB (Already installed!)
+│   ├── package.json      # Dependencies list
+│   ├── .env.local        # Configuration
+│   └── README.md         # Frontend documentation
+│
+├── backend/               # NestJS Backend
+│   ├── src/              # Source code
+│   ├── node_modules/     # 458 MB (Already installed!)
+│   ├── package.json      # Dependencies list
+│   ├── .env              # Configuration
+│   └── README.md         # Backend documentation
+│
+├── GET_STARTED.md         # Quick start guide (READ THIS FIRST!)
+├── INSTALLATION_GUIDE.md  # Detailed setup & troubleshooting
+├── start.sh              # Auto-start script (Mac/Linux)
+├── start.bat             # Auto-start script (Windows)
+└── README.md             # Project overview
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 ENVIRONMENT VARIABLES (Already Set!)
+
+Frontend: frontend/.env.local
+  NEXT_PUBLIC_API_URL=http://localhost:3002
+  NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+Backend: backend/.env
+  PORT=3002
+  DB_HOST=localhost
+  DB_USERNAME=postgres
+  DB_PASSWORD=HEROsprint@123
+  DB_NAME=paisaads
+  JWT_SECRET=<pre-configured>
+
+→ These are ready to use! No changes needed for local development.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ WHAT YOU CAN DO
+
+User Features:
+  ✓ Create account & login
+  ✓ Post advertisements (Line, Poster, Video)
+  ✓ Edit your ads
+  ✓ View your dashboard
+  ✓ Search & browse ads
+  ✓ Manage profile
+
+Admin Features:
+  ✓ Manage all ads
+  ✓ Approve/reject submissions
+  ✓ View reports
+  ✓ Manage system configuration
+  ✓ User management
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ ISSUES?
+
+1. "Port already in use"
+   → Kill process: npx kill-port 3000 3002
+
+2. "Cannot connect to database"
+   → Check PostgreSQL is running
+   → Verify database exists: psql -U postgres -l
+
+3. "Modules not found"
+   → npm install --legacy-peer-deps in frontend/ and backend/
+
+4. "Backend API not responding"
+   → Check backend is running on port 3002
+   → Verify .env.local has correct API URL
+
+→ See INSTALLATION_GUIDE.md for more help
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION
+
+Start with:       GET_STARTED.md (This is your quick start guide)
+Detailed setup:   INSTALLATION_GUIDE.md
+Frontend docs:    frontend/README.md
+Backend docs:     backend/README.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 SUMMARY
+
+1. Extract the 'pay' folder
+2. Install Node.js & PostgreSQL (if needed)
+3. Create the 'paisaads' database
+4. Run: ./start.sh (Mac/Linux) or start.bat (Windows)
+   OR manually start backend and frontend
+5. Open http://localhost:3000
+6. Done! 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Thank you for using PaisaAds! 
+
+Happy coding! 🚀
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
