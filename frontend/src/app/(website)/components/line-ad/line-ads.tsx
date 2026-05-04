@@ -322,7 +322,12 @@ export default function LineAds() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data } = await api.get("/auth/current");
+        const token = localStorage.getItem("paisaads_token");
+        if (!token) {
+          setIsAuthenticated(false);
+          return;
+        }
+        const { data } = await api.get("/auth/profile");
         setIsAuthenticated(!!data);
       } catch (error) {
         setIsAuthenticated(false);

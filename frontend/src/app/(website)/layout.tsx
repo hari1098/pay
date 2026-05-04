@@ -54,7 +54,7 @@ export default function RegisterLayout({
         const response = await fetch(
           `${
             process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
-          }/server/configurations/contact-page`
+          }/configurations/contact-page`
         );
         if (response.ok) {
           const data = await response.json();

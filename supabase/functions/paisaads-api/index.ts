@@ -302,13 +302,24 @@ app.get("/paisaads-api/categories/tree", async (c) => {
       supabase.from("category_two").select("id, name, category_heading_font_color, is_active, parent_id").eq("is_active", true),
       supabase.from("category_three").select("id, name, category_heading_font_color, is_active, parent_id").eq("is_active", true),
     ]);
-    const tree = (mainRes.data || []).map((main: any) => ({
-      ...main, subCategories: (oneRes.data || []).filter((c: any) => c.parent_id === main.id).map((one: any) => ({
-        ...one, subCategories: (twoRes.data || []).filter((c: any) => c.parent_id === one.id).map((two: any) => ({
-          ...two, subCategories: (threeRes.data || []).filter((c: any) => c.parent_id === two.id),
-        })),
-      })),
-    }));
+    const buildChildren = (items: any[], parentId: string, allLevels: any[]): any[] => {
+      return items.filter((c: any) => c.parent_id === parentId).map((item: any) => {
+        const ch = buildChildren(allLevels, item.id, allLevels);
+        return { ...item, children: ch, subCategories: ch };
+      });
+    };
+    const tree = (mainRes.data || []).map((main: any) => {
+      const ch = buildChildren(oneRes.data || [], main.id, [...(twoRes.data || []), ...(threeRes.data || [])]);
+      // Build proper 3-level hierarchy
+      const levelOne = (oneRes.data || []).filter((c: any) => c.parent_id === main.id).map((one: any) => {
+        const levelTwo = (twoRes.data || []).filter((c: any) => c.parent_id === one.id).map((two: any) => {
+          const levelThree = (threeRes.data || []).filter((c: any) => c.parent_id === two.id);
+          return { ...two, children: levelThree, subCategories: levelThree };
+        });
+        return { ...one, children: levelTwo, subCategories: levelTwo };
+      });
+      return { ...main, children: levelOne, subCategories: levelOne };
+    });
     return c.json(tree);
   } catch (err) {
     return c.json({ message: String(err) }, 500);
@@ -445,12 +456,49 @@ app.delete("/paisaads-api/categories/three/:id", async (c) => {
 
 // ============ LINE ADS ============
 
+function transformImage(img: any) {
+  if (!img) return img;
+  return { ...img, fileName: img.file_name, filePath: img.file_path, isTemp: img.is_temp };
+}
+
+function transformAd(ad: any) {
+  if (!ad) return ad;
+  return {
+    ...ad,
+    sequenceNumber: ad.sequence_number,
+    orderId: ad.order_id,
+    mainCategory: ad.main_category,
+    categoryOne: ad.category_one,
+    categoryTwo: ad.category_two,
+    categoryThree: ad.category_three,
+    mainCategoryId: ad.main_category_id,
+    categoryOneId: ad.category_one_id,
+    categoryTwoId: ad.category_two_id,
+    categoryThreeId: ad.category_three_id,
+    paymentId: ad.payment_id,
+    customerId: ad.customer_id,
+    isActive: ad.is_active,
+    postedBy: ad.posted_by,
+    contactOne: ad.contact_one,
+    contactTwo: ad.contact_two,
+    backgroundColor: ad.background_color,
+    textColor: ad.text_color,
+    pageType: ad.page_type,
+    image: ad.image || (ad.images && ad.images.length > 0 ? ad.images[0] : null),
+    images: ad.images || (ad.image ? [ad.image] : []),
+  };
+}
+
+function transformAds(ads: any[]) {
+  return (ads || []).map(transformAd);
+}
+
 app.get("/paisaads-api/line-ad/today", async (c) => {
   try {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("line_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), category_two:category_two_id(id, name), category_three:category_three_id(id, name), customer:customer_id(id, user_id), payment:payment_id(*)").eq("is_active", true).in("status", ["PUBLISHED", "FOR_REVIEW"]).order("created_at", { ascending: false });
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data || []);
+    return c.json(transformAds(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -462,7 +510,7 @@ app.get("/paisaads-api/line-ad/my-ads", async (c) => {
     const { data: customer } = await supabase.from("customer").select("id").eq("user_id", user.id).maybeSingle();
     if (!customer) return c.json([]);
     const { data } = await supabase.from("line_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name)").eq("customer_id", customer.id).order("created_at", { ascending: false });
-    return c.json(data || []);
+    return c.json(transformAds(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -471,7 +519,7 @@ app.get("/paisaads-api/line-ad/status/:status", async (c) => {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("line_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), customer:customer_id(id, user_id)").eq("status", c.req.param("status")).eq("is_active", true).order("created_at", { ascending: false });
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data || []);
+    return c.json(transformAds(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -480,7 +528,7 @@ app.get("/paisaads-api/line-ad/:id", async (c) => {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("line_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), category_two:category_two_id(id, name), category_three:category_three_id(id, name), customer:customer_id(id, user_id), payment:payment_id(*), comments:ad_comment(*, user:user_id(id, name))").eq("id", c.req.param("id")).maybeSingle();
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data);
+    return c.json(transformAd(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -549,7 +597,12 @@ app.get("/paisaads-api/poster-ad/today", async (c) => {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("poster_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), customer:customer_id(id, user_id), payment:payment_id(*)").eq("is_active", true).in("status", ["PUBLISHED", "FOR_REVIEW"]).order("created_at", { ascending: false });
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data || []);
+    const adsWithImages = await Promise.all((data || []).map(async (ad: any) => {
+      const { data: images } = await supabase.from("image").select("id, file_name, file_path").eq("poster_ad_id", ad.id);
+      const transformedImages = (images || []).map(transformImage);
+      return { ...ad, images: transformedImages, image: transformedImages.length > 0 ? transformedImages[0] : null };
+    }));
+    return c.json(transformAds(adsWithImages));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -561,7 +614,7 @@ app.get("/paisaads-api/poster-ad/my-ads", async (c) => {
     const { data: customer } = await supabase.from("customer").select("id").eq("user_id", user.id).maybeSingle();
     if (!customer) return c.json([]);
     const { data } = await supabase.from("poster_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name)").eq("customer_id", customer.id).order("created_at", { ascending: false });
-    return c.json(data || []);
+    return c.json(transformAds(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -570,7 +623,7 @@ app.get("/paisaads-api/poster-ad/status/:status", async (c) => {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("poster_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), customer:customer_id(id, user_id)").eq("status", c.req.param("status")).eq("is_active", true).order("created_at", { ascending: false });
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data || []);
+    return c.json(transformAds(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -579,7 +632,13 @@ app.get("/paisaads-api/poster-ad/:id", async (c) => {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("poster_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), category_two:category_two_id(id, name), category_three:category_three_id(id, name), customer:customer_id(id, user_id), payment:payment_id(*), comments:ad_comment(*, user:user_id(id, name))").eq("id", c.req.param("id")).maybeSingle();
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data);
+    if (data) {
+      const { data: images } = await supabase.from("image").select("id, file_name, file_path").eq("poster_ad_id", data.id);
+      const transformedImages = (images || []).map(transformImage);
+      data.images = transformedImages;
+      data.image = transformedImages.length > 0 ? transformedImages[0] : null;
+    }
+    return c.json(transformAd(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -639,7 +698,12 @@ app.get("/paisaads-api/video-ad/today", async (c) => {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("video_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), customer:customer_id(id, user_id), payment:payment_id(*)").eq("is_active", true).in("status", ["PUBLISHED", "FOR_REVIEW"]).order("created_at", { ascending: false });
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data || []);
+    const adsWithImages = await Promise.all((data || []).map(async (ad: any) => {
+      const { data: images } = await supabase.from("image").select("id, file_name, file_path").eq("video_ad_id", ad.id);
+      const transformedImages = (images || []).map(transformImage);
+      return { ...ad, images: transformedImages, image: transformedImages.length > 0 ? transformedImages[0] : null };
+    }));
+    return c.json(transformAds(adsWithImages));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -651,7 +715,7 @@ app.get("/paisaads-api/video-ad/my-ads", async (c) => {
     const { data: customer } = await supabase.from("customer").select("id").eq("user_id", user.id).maybeSingle();
     if (!customer) return c.json([]);
     const { data } = await supabase.from("video_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name)").eq("customer_id", customer.id).order("created_at", { ascending: false });
-    return c.json(data || []);
+    return c.json(transformAds(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -660,7 +724,7 @@ app.get("/paisaads-api/video-ad/status/:status", async (c) => {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("video_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), customer:customer_id(id, user_id)").eq("status", c.req.param("status")).eq("is_active", true).order("created_at", { ascending: false });
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data || []);
+    return c.json(transformAds(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -669,7 +733,13 @@ app.get("/paisaads-api/video-ad/:id", async (c) => {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase.from("video_ad").select("*, main_category:main_category_id(id, name), category_one:category_one_id(id, name), category_two:category_two_id(id, name), category_three:category_three_id(id, name), customer:customer_id(id, user_id), payment:payment_id(*), comments:ad_comment(*, user:user_id(id, name))").eq("id", c.req.param("id")).maybeSingle();
     if (error) return c.json({ message: error.message }, 500);
-    return c.json(data);
+    if (data) {
+      const { data: images } = await supabase.from("image").select("id, file_name, file_path").eq("video_ad_id", data.id);
+      const transformedImages = (images || []).map(transformImage);
+      data.images = transformedImages;
+      data.image = transformedImages.length > 0 ? transformedImages[0] : null;
+    }
+    return c.json(transformAd(data));
   } catch (err) { return c.json({ message: String(err) }, 500); }
 });
 
@@ -825,7 +895,7 @@ const configurations: Record<string, any> = {
   "faq": { questions: [{ question: "How to post an ad?", answer: "Register, verify your phone, and click Post Ad from your dashboard." }, { question: "How long do ads stay published?", answer: "Ads stay published for the duration you selected during posting." }, { question: "How to contact support?", answer: "Use the Contact Us page or email support@paisaads.in" }] },
   "contact-page": { email: "support@paisaads.in", phone: "+91-9999999999", address: "Mumbai, India" },
   "ad-pricing": { lineAd: 99, posterAd: 199, videoAd: 299 },
-  "search-slogan": { slogan: "Find what you need, sell what you don't" },
+  "search-slogan": { primarySlogan: "Find What You Need", secondarySlogan: "Search through thousands of classified advertisements" },
   "about-us": { content: "PaisaAds is India's leading classified ads platform connecting buyers and sellers." },
 };
 
