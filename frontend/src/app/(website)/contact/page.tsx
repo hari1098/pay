@@ -1,35 +1,40 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Phone, MapPin, Clock, Globe, CircleAlert as AlertCircle, Users, ShoppingCart } from "lucide-react";
-import api from "@/lib/api";
 
-export default function ContactPage() {
-  const { data: contactData, isLoading, error } = useQuery({
-    queryKey: ["contactPage"],
-    queryFn: async () => {
-      const { data } = await api.get("/configurations/contact-page");
-      return data;
-    },
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/paisaads-api";
+
+interface ContactData {
+  companyName?: string;
+  email?: string;
+  phone?: string;
+  alternatePhone?: string;
+  websiteUrl?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  coordinates?: { latitude: number; longitude: number };
+  supportEmail?: string;
+  salesEmail?: string;
+  emergencyContact?: string;
+  businessHours?: Record<string, string>;
+  socialMediaLinks?: string[];
+}
+
+async function getContactData(): Promise<ContactData | null> {
+  const res = await fetch(`${API_BASE}/configurations/contact-page`, {
+    next: { revalidate: 300 },
   });
+  if (!res.ok) return null;
+  return res.json();
+}
 
-  if (isLoading) {
-    return (
-      <div className="pt-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+export default async function ContactPage() {
+  const contactData = await getContactData();
 
-  if (error || !contactData) {
+  if (!contactData) {
     return (
       <div className="pt-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -61,7 +66,7 @@ export default function ContactPage() {
                   <Mail className="h-5 w-5 text-blue-600 mt-1" />
                   <div>
                     <p className="font-medium">Email Address</p>
-                    <a 
+                    <a
                       href={`mailto:${contactData.email}`}
                       className="text-blue-600 hover:text-blue-800"
                     >
@@ -76,7 +81,7 @@ export default function ContactPage() {
                   <Phone className="h-5 w-5 text-green-600 mt-1" />
                   <div>
                     <p className="font-medium">Phone Number</p>
-                    <a 
+                    <a
                       href={`tel:${contactData.phone}`}
                       className="text-gray-700 hover:text-gray-900"
                     >
@@ -91,7 +96,7 @@ export default function ContactPage() {
                   <Phone className="h-5 w-5 text-green-600 mt-1" />
                   <div>
                     <p className="font-medium">Alternate Phone</p>
-                    <a 
+                    <a
                       href={`tel:${contactData.alternatePhone}`}
                       className="text-gray-700 hover:text-gray-900"
                     >
@@ -106,7 +111,7 @@ export default function ContactPage() {
                   <Globe className="h-5 w-5 text-purple-600 mt-1" />
                   <div>
                     <p className="font-medium">Website</p>
-                    <a 
+                    <a
                       href={contactData.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -137,7 +142,7 @@ export default function ContactPage() {
                     </p>
                     {contactData.country && <p>{contactData.country}</p>}
                   </div>
-                  
+
                   {contactData.coordinates && (
                     <div className="mt-4">
                       <p className="text-sm text-gray-600">
@@ -162,7 +167,7 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-2">For technical support and help</p>
-                <a 
+                <a
                   href={`mailto:${contactData.supportEmail}`}
                   className="text-blue-600 hover:text-blue-800 font-medium"
                 >
@@ -182,7 +187,7 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-2">For sales inquiries and partnerships</p>
-                <a 
+                <a
                   href={`mailto:${contactData.salesEmail}`}
                   className="text-blue-600 hover:text-blue-800 font-medium"
                 >
@@ -221,7 +226,7 @@ export default function ContactPage() {
                 {Object.entries(contactData.businessHours).map(([day, hours]) => (
                   <div key={day} className="text-center p-3 border rounded-lg">
                     <p className="font-medium capitalize">{day}</p>
-                    <p className="text-sm text-gray-600">{hours as string}</p>
+                    <p className="text-sm text-gray-600">{hours}</p>
                   </div>
                 ))}
               </div>

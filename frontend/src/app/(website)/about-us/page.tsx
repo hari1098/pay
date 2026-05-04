@@ -1,10 +1,20 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Users, Target, Eye, Heart, Shield, Zap, ArrowRight } from "lucide-react";
 
-export default function AboutUsPage() {
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/paisaads-api";
+
+async function getAboutUs() {
+  const res = await fetch(`${API_BASE}/configurations/about-us`, {
+    next: { revalidate: 300 },
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+export default async function AboutUsPage() {
+  const aboutData = await getAboutUs();
+
   return (
     <div className="min-h-screen bg-white">
       <section className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
@@ -17,12 +27,21 @@ export default function AboutUsPage() {
               </span>
             </h1>
             <div className="mt-8 max-w-3xl mx-auto">
-              <p className="text-xl sm:text-2xl text-gray-600 leading-relaxed font-light">
-                Your trusted platform for buying, selling, and discovering amazing deals.
-              </p>
-              <p className="mt-4 text-lg text-gray-500 leading-relaxed">
-                We connect communities through classified advertisements, making commerce simple and accessible for everyone.
-              </p>
+              {aboutData?.content ? (
+                <div
+                  className="prose prose-xl max-w-none text-gray-600 leading-relaxed font-light"
+                  dangerouslySetInnerHTML={{ __html: aboutData.content }}
+                />
+              ) : (
+                <>
+                  <p className="text-xl sm:text-2xl text-gray-600 leading-relaxed font-light">
+                    Your trusted platform for buying, selling, and discovering amazing deals.
+                  </p>
+                  <p className="mt-4 text-lg text-gray-500 leading-relaxed">
+                    We connect communities through classified advertisements, making commerce simple and accessible for everyone.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -36,7 +55,7 @@ export default function AboutUsPage() {
               Driven by a clear mission and vision to transform how people connect and trade
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100">
               <CardHeader className="relative p-8 pb-4">
@@ -49,7 +68,7 @@ export default function AboutUsPage() {
               </CardHeader>
               <CardContent className="relative p-8 pt-0">
                 <p className="text-gray-700 leading-relaxed text-lg">
-                  To create the most user-friendly and secure marketplace where individuals and businesses 
+                  To create the most user-friendly and secure marketplace where individuals and businesses
                   can easily connect, trade, and grow their communities through classified advertisements.
                 </p>
               </CardContent>
@@ -66,7 +85,7 @@ export default function AboutUsPage() {
               </CardHeader>
               <CardContent className="relative p-8 pt-0">
                 <p className="text-gray-700 leading-relaxed text-lg">
-                  To become the leading classified ads platform that empowers millions of users to discover 
+                  To become the leading classified ads platform that empowers millions of users to discover
                   opportunities, build connections, and achieve their buying and selling goals with ease.
                 </p>
               </CardContent>
@@ -207,7 +226,7 @@ export default function AboutUsPage() {
               </CardHeader>
               <CardContent className="relative p-8 pt-0">
                 <p className="text-gray-700 leading-relaxed text-lg mb-6">
-                  PaisaAds is built with modern technology to provide a seamless experience for both buyers and sellers. 
+                  PaisaAds is built with modern technology to provide a seamless experience for both buyers and sellers.
                   Our platform supports various types of advertisements designed for maximum engagement.
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -230,7 +249,7 @@ export default function AboutUsPage() {
               </CardHeader>
               <CardContent className="relative p-8 pt-0">
                 <p className="text-gray-700 leading-relaxed text-lg mb-4">
-                  Whether you're looking to sell items you no longer need, promote your business, 
+                  Whether you're looking to sell items you no longer need, promote your business,
                   or find great deals in your area, PaisaAds provides the tools and community to help you succeed.
                 </p>
                 <p className="text-gray-700 leading-relaxed text-lg">
@@ -251,17 +270,17 @@ export default function AboutUsPage() {
               <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
                 Join PaisaAds today and discover a world of opportunities right at your fingertips.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a 
-                  href="/search" 
+                <a
+                  href="/search"
                   className="group bg-white hover:bg-gray-50 text-gray-900 px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 flex items-center gap-2"
                 >
                   Browse Ads
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </a>
-                <a 
-                  href="/dashboard/post-ad" 
+                <a
+                  href="/dashboard/post-ad"
                   className="group bg-transparent hover:bg-white/10 text-white px-8 py-4 rounded-xl font-semibold border-2 border-white/30 hover:border-white/50 transition-all duration-300 flex items-center gap-2"
                 >
                   Post Your Ad

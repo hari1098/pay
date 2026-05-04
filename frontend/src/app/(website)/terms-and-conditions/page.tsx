@@ -1,37 +1,28 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollText, Calendar, User } from "lucide-react";
-import api from "@/lib/api";
 
-export default function TermsAndConditionsPage() {
-  const { data: termsData, isLoading, error } = useQuery({
-    queryKey: ["termsAndConditions"],
-    queryFn: async () => {
-      const { data } = await api.get("/configurations/terms-and-conditions");
-      return data;
-    },
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/paisaads-api";
+
+interface TermsData {
+  content?: string;
+  version?: string;
+  effectiveDate?: string;
+  lastUpdated?: string;
+  updatedBy?: string;
+}
+
+async function getTermsData(): Promise<TermsData | null> {
+  const res = await fetch(`${API_BASE}/configurations/terms-and-conditions`, {
+    next: { revalidate: 300 },
   });
+  if (!res.ok) return null;
+  return res.json();
+}
 
-  if (isLoading) {
-    return (
-      <div className="pt-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+export default async function TermsAndConditionsPage() {
+  const termsData = await getTermsData();
 
-  if (error || !termsData) {
+  if (!termsData) {
     return (
       <div className="pt-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -108,7 +99,7 @@ export default function TermsAndConditionsPage() {
         <Card className="mb-8">
           <CardContent className="pt-6">
             {termsData.content ? (
-              <div 
+              <div
                 className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: termsData.content }}
               />

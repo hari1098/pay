@@ -1,37 +1,28 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Calendar, User, FileText } from "lucide-react";
-import api from "@/lib/api";
 
-export default function PrivacyPolicyPage() {
-  const { data: privacyData, isLoading, error } = useQuery({
-    queryKey: ["privacyPolicy"],
-    queryFn: async () => {
-      const { data } = await api.get("/configurations/privacy-policy");
-      return data;
-    },
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/paisaads-api";
+
+interface PrivacyData {
+  content?: string;
+  version?: string;
+  effectiveDate?: string;
+  lastUpdated?: string;
+  updatedBy?: string;
+}
+
+async function getPrivacyData(): Promise<PrivacyData | null> {
+  const res = await fetch(`${API_BASE}/configurations/privacy-policy`, {
+    next: { revalidate: 300 },
   });
+  if (!res.ok) return null;
+  return res.json();
+}
 
-  if (isLoading) {
-    return (
-      <div className="pt-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+export default async function PrivacyPolicyPage() {
+  const privacyData = await getPrivacyData();
 
-  if (error || !privacyData) {
+  if (!privacyData) {
     return (
       <div className="pt-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -108,7 +99,7 @@ export default function PrivacyPolicyPage() {
         <Card className="mb-8">
           <CardContent className="pt-6">
             {privacyData.content ? (
-              <div 
+              <div
                 className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: privacyData.content }}
               />
@@ -128,8 +119,8 @@ export default function PrivacyPolicyPage() {
               <div>
                 <h3 className="font-semibold text-green-900 mb-2">Your Privacy Matters</h3>
                 <p className="text-sm text-green-800">
-                  We are committed to protecting your personal information and your right to privacy. 
-                  If you have any questions or concerns about our policy or our practices regarding 
+                  We are committed to protecting your personal information and your right to privacy.
+                  If you have any questions or concerns about our policy or our practices regarding
                   your personal information, please contact us.
                 </p>
               </div>
