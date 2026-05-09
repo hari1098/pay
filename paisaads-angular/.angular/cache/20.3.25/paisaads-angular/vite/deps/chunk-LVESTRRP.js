@@ -27967,6 +27967,3 @@ export {
   REQUEST_CONTEXT
 };
 //# sourceMappingURL=chunk-LVESTRRP.js.map
-
-
-export { DOCUMENT, IMAGE_CONFIG }
