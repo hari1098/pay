@@ -1,0 +1,104 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1 class="hero-title">Find What You Need</h1>
+    <p class="hero-subtitle">Browse thousands of classified ads or post your own to reach a wide audience across India</p>
+    <div class="hero-actions">
+      <a mat-raised-button color="primary" class="hero-btn" routerLink="/search">
+        <mat-icon>search</mat-icon>
+        Browse Ads
+      </a>
+      <a mat-stroked-button color="accent" class="hero-btn hero-btn-outline" routerLink="/dashboard/post-ad">
+        <mat-icon>campaign</mat-icon>
+        Post Ad
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Category Pills -->
+@if (categories().length > 0) {
+<section class="section categories-section">
+  <div class="section-container">
+    <div class="categories-scroll">
+      <mat-chip-set>
+        @for (cat of categories(); track cat.id) {
+          <mat-chip routerLink="/search" [queryParams]="{ mainCategory: cat.slug }" class="category-chip">
+            {{ cat.name }}
+          </mat-chip>
+        }
+      </mat-chip-set>
+    </div>
+  </div>
+</section>
+}
+
+<!-- Line Ads Grid -->
+<section class="section ads-section">
+  <div class="section-container">
+    <h2 class="section-title">Today's Line Ads</h2>
+
+    @if (loading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (lineAds().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">article</mat-icon>
+        <p>No ads posted today. Be the first to post!</p>
+        <a mat-raised-button color="primary" routerLink="/dashboard/post-ad">Post an Ad</a>
+      </div>
+    } @else {
+      <div class="ads-masonry">
+        @for (ad of lineAds(); track ad.id) {
+          <mat-card class="ad-card" appearance="outlined">
+            <mat-card-header>
+              <div class="ad-categories">
+                <span class="badge badge-main">{{ ad.mainCategory }}</span>
+                <span class="badge badge-sub">{{ ad.categoryOne }}</span>
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="ad-content">{{ ad.content }}</p>
+              <div class="ad-meta">
+                <span class="ad-meta-item">
+                  <mat-icon class="meta-icon">person</mat-icon>
+                  {{ ad.postedByName || 'Anonymous' }}
+                </span>
+                <span class="ad-meta-item">
+                  <mat-icon class="meta-icon">location_on</mat-icon>
+                  {{ ad.city }}, {{ ad.state }}
+                </span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Quick Link Cards -->
+<section class="section quick-links-section">
+  <div class="section-container">
+    <div class="quick-links-grid">
+      @for (link of quickLinks; track link.title) {
+        <mat-card class="quick-link-card" routerLink="{{ link.link }}" appearance="outlined">
+          <mat-card-header>
+            <div class="quick-link-icon" [style.--link-color]="link.color">
+              <mat-icon>{{ link.icon }}</mat-icon>
+            </div>
+            <mat-card-title>{{ link.title }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ link.description }}</p>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <span class="quick-link-arrow">Learn More <mat-icon>arrow_forward</mat-icon></span>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  </div>
+</section>

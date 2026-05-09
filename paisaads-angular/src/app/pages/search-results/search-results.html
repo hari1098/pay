@@ -1,0 +1,66 @@
+<section class="results-section">
+  <div class="results-container">
+    <div class="results-header">
+      <h1 class="results-title">Search Results</h1>
+      @if (!loading() && totalElements() > 0) {
+        <p class="results-count">{{ totalElements() }} ads found</p>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (ads().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <p>No ads match your search criteria.</p>
+        <a mat-raised-button color="primary" routerLink="/search">Try a Different Search</a>
+      </div>
+    } @else {
+      <div class="results-grid">
+        @for (ad of ads(); track ad.id) {
+          <mat-card class="result-card" appearance="outlined">
+            <mat-card-header>
+              <div class="result-categories">
+                <span class="badge badge-main">{{ ad.mainCategory }}</span>
+                <span class="badge badge-sub">{{ ad.categoryOne }}</span>
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="result-content">{{ ad.content }}</p>
+              <div class="result-meta">
+                <span class="result-meta-item">
+                  <mat-icon class="meta-icon">person</mat-icon>
+                  {{ ad.postedByName || 'Anonymous' }}
+                </span>
+                <span class="result-meta-item">
+                  <mat-icon class="meta-icon">location_on</mat-icon>
+                  {{ ad.city }}, {{ ad.state }}
+                </span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <button mat-stroked-button [disabled]="currentPage() === 0" (click)="onPageChange(currentPage() - 1)">
+            <mat-icon>chevron_left</mat-icon> Previous
+          </button>
+          <div class="pagination-numbers">
+            @for (page of pageArray(); track page) {
+              <button mat-button [color]="page === currentPage() ? 'primary' : ''" (click)="onPageChange(page)">
+                {{ page + 1 }}
+              </button>
+            }
+          </div>
+          <button mat-stroked-button [disabled]="currentPage() >= totalPages() - 1" (click)="onPageChange(currentPage() + 1)">
+            Next <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      }
+    }
+  </div>
+</section>

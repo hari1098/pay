@@ -1,0 +1,58 @@
+<div class="page-content">
+  <h2 class="page-title">Ads Pending Review</h2>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (ads().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">task_alt</mat-icon>
+      <p>No ads pending review.</p>
+    </div>
+  } @else {
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="ads()" class="admin-table">
+        <ng-container matColumnDef="content">
+          <th mat-header-cell *matHeaderCellDef>Content</th>
+          <td mat-cell *matCellDef="let ad">
+            <span class="cell-text">{{ ad.content }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let ad">
+            <span class="badge badge-main">{{ ad.mainCategory }}</span>
+            <span class="badge badge-sub">{{ ad.categoryOne }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef>Location</th>
+          <td mat-cell *matCellDef="let ad">{{ ad.city }}, {{ ad.state }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="postedBy">
+          <th mat-header-cell *matHeaderCellDef>Posted By</th>
+          <td mat-cell *matCellDef="let ad">{{ ad.postedByName || 'Unknown' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let ad">
+            <button mat-icon-button color="primary" (click)="approve(ad.id)" matTooltip="Approve">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="reject(ad.id)" matTooltip="Reject">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  }
+</div>

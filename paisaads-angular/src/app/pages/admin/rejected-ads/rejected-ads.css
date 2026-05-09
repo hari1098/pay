@@ -1,0 +1,10 @@
+.page-content { max-width: 1100px; }
+.page-title { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin: 0 0 24px; }
+.loading-container { display: flex; justify-content: center; padding: 48px 0; }
+.empty-state { text-align: center; padding: 48px 0; }
+.empty-icon { font-size: 48px; width: 48px; height: 48px; color: #f44336; }
+.empty-state p { font-size: 16px; color: #666; margin: 16px 0 0; }
+.table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid #e0e0e0; }
+.admin-table { width: 100%; }
+.badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 12px; }
+.badge-rejected { background: #fce4ec; color: #c62828; }

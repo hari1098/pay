@@ -1,0 +1,38 @@
+<div class="page-content">
+  <h2 class="page-title">My Profile</h2>
+
+  @if (success()) {
+    <div class="success-message">Profile updated successfully.</div>
+  }
+
+  @if (error()) {
+    <div class="error-message">{{ error() }}</div>
+  }
+
+  <div class="profile-card">
+    <form class="profile-form" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Full Name</mat-label>
+        <input matInput [(ngModel)]="name" name="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="email" name="email" type="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Phone Number</mat-label>
+        <input matInput [(ngModel)]="phoneNumber" name="phoneNumber" readonly />
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading()">
+        @if (loading()) {
+          Saving...
+        } @else {
+          Save Changes
+        }
+      </button>
+    </form>
+  </div>
+</div>

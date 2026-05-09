@@ -1,0 +1,61 @@
+<div class="page-content">
+  <h2 class="page-title">Reports & Analytics</h2>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else {
+    <div class="stats-grid">
+      <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header>
+          <div class="stat-icon stat-icon-blue"><mat-icon>people</mat-icon></div>
+          <mat-card-title>Total Users</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <span class="stat-value">{{ report().totalUsers }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header>
+          <div class="stat-icon stat-icon-green"><mat-icon>article</mat-icon></div>
+          <mat-card-title>Total Ads</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <span class="stat-value">{{ report().totalAds }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header>
+          <div class="stat-icon stat-icon-orange"><mat-icon>pending</mat-icon></div>
+          <mat-card-title>Pending Review</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <span class="stat-value">{{ report().pendingAds }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header>
+          <div class="stat-icon stat-icon-teal"><mat-icon>check_circle</mat-icon></div>
+          <mat-card-title>Published</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <span class="stat-value">{{ report().publishedAds }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header>
+          <div class="stat-icon stat-icon-red"><mat-icon>cancel</mat-icon></div>
+          <mat-card-title>Rejected</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <span class="stat-value">{{ report().rejectedAds }}</span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

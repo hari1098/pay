@@ -1,0 +1,41 @@
+<section class="auth-section">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Log in to your PaisaAds account</p>
+      </div>
+
+      @if (error()) {
+        <div class="auth-error">{{ error() }}</div>
+      }
+
+      <form class="auth-form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Phone Number</mat-label>
+          <input matInput [(ngModel)]="phoneNumber" name="phoneNumber" required placeholder="+91 98765 43210" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Password</mat-label>
+          <input matInput [(ngModel)]="password" [type]="hidePassword ? 'password' : 'text'" name="password" required placeholder="Enter your password" />
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" class="auth-submit-btn" [disabled]="loading()">
+          @if (loading()) {
+            Logging In...
+          } @else {
+            Log In
+          }
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p>Don't have an account? <a routerLink="/register" class="auth-link">Create Account</a></p>
+      </div>
+    </div>
+  </div>
+</section>

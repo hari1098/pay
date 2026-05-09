@@ -1,0 +1,48 @@
+<section class="search-hero">
+  <h1 class="search-heading">Search Classified Ads</h1>
+  <p class="search-slogan">{{ slogan() }}</p>
+</section>
+
+<section class="search-form-section">
+  <div class="search-form-container">
+    <form class="search-form" (ngSubmit)="onSearch()">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Category</mat-label>
+        <mat-select [(ngModel)]="mainCategory" name="mainCategory">
+          <mat-option value="">All Categories</mat-option>
+          @for (cat of categories(); track cat.id) {
+            <mat-option [value]="cat.slug">{{ cat.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>State</mat-label>
+        <input matInput [(ngModel)]="state" name="state" placeholder="e.g. Maharashtra" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>City</mat-label>
+        <input matInput [(ngModel)]="city" name="city" placeholder="e.g. Mumbai" />
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" class="search-btn">
+        <mat-icon>search</mat-icon>
+        Search
+      </button>
+    </form>
+  </div>
+</section>
+
+<section class="category-links-section">
+  <div class="category-links-container">
+    <h3 class="category-links-title">Browse by Category</h3>
+    <div class="category-links-grid">
+      @for (cat of categories(); track cat.id) {
+        <button mat-stroked-button class="category-link-btn" (click)="navigateToCategory(cat.slug)">
+          {{ cat.name }}
+        </button>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,135 @@
+<div class="page-content">
+  <h2 class="page-title">Post an Ad</h2>
+
+  @if (success()) {
+    <div class="success-message">
+      <mat-icon>check_circle</mat-icon>
+      Your ad has been submitted for review. It will be published once approved.
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-message">{{ error() }}</div>
+  }
+
+  <form class="ad-form" (ngSubmit)="onSubmit()">
+    <div class="form-section">
+      <h3 class="form-section-title">Ad Type</h3>
+      <mat-button-toggle-group [(value)]="adType" name="adType" class="type-toggle">
+        <mat-button-toggle value="LINE">
+          <mat-icon>article</mat-icon>
+          Line Ad
+        </mat-button-toggle>
+        <mat-button-toggle value="POSTER">
+          <mat-icon>image</mat-icon>
+          Poster Ad
+        </mat-button-toggle>
+        <mat-button-toggle value="VIDEO">
+          <mat-icon>videocam</mat-icon>
+          Video Ad
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    @if (adType === 'POSTER' || adType === 'VIDEO') {
+      <div class="form-section">
+        <h3 class="form-section-title">Title</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ad Title</mat-label>
+          <input matInput [(ngModel)]="title" name="title" placeholder="Enter a catchy title" />
+        </mat-form-field>
+      </div>
+    }
+
+    @if (adType === 'POSTER') {
+      <div class="form-section">
+        <h3 class="form-section-title">Image</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Image URL</mat-label>
+          <input matInput [(ngModel)]="imageUrl" name="imageUrl" placeholder="Paste image URL" />
+        </mat-form-field>
+      </div>
+    }
+
+    @if (adType === 'VIDEO') {
+      <div class="form-section">
+        <h3 class="form-section-title">Video</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Video URL</mat-label>
+          <input matInput [(ngModel)]="videoUrl" name="videoUrl" placeholder="Paste video URL" />
+        </mat-form-field>
+      </div>
+    }
+
+    <div class="form-section">
+      <h3 class="form-section-title">Content</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Ad Content</mat-label>
+        <textarea matInput [(ngModel)]="content" name="content" rows="4" placeholder="Describe what you're offering..." required></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Categories</h3>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Main Category</mat-label>
+          <mat-select [(ngModel)]="mainCategory" name="mainCategory" required (selectionChange)="onMainCategoryChange()">
+            <mat-option value="">Select Category</mat-option>
+            @for (cat of categories(); track cat.id) {
+              <mat-option [value]="cat.slug">{{ cat.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        @if (subCategories().length > 0) {
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Sub Category</mat-label>
+            <mat-select [(ngModel)]="categoryOne" name="categoryOne">
+              <mat-option value="">Select Sub Category</mat-option>
+              @for (sub of subCategories(); track sub.id) {
+                <mat-option [value]="sub.slug">{{ sub.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Location</h3>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>State</mat-label>
+          <input matInput [(ngModel)]="state" name="state" required placeholder="e.g. Maharashtra" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>City</mat-label>
+          <input matInput [(ngModel)]="city" name="city" required placeholder="e.g. Mumbai" />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Contact</h3>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Primary Contact</mat-label>
+          <input matInput [(ngModel)]="contactOne" name="contactOne" required placeholder="Phone number" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Secondary Contact</mat-label>
+          <input matInput [(ngModel)]="contactTwo" name="contactTwo" placeholder="Optional" />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading()">
+      @if (loading()) {
+        Submitting...
+      } @else {
+        Submit Ad
+      }
+    </button>
+  </form>
+</div>

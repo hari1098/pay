@@ -1,0 +1,17 @@
+<section class="faq-section">
+  <div class="faq-container">
+    <h1 class="faq-title">Frequently Asked Questions</h1>
+    <p class="faq-subtitle">Find answers to common questions about PaisaAds</p>
+
+    <div class="faq-list">
+      @for (item of faqItems(); track item.question) {
+        <mat-expansion-panel class="faq-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title class="faq-question">{{ item.question }}</mat-panel-title>
+          </mat-expansion-panel-header>
+          <p class="faq-answer">{{ item.answer }}</p>
+        </mat-expansion-panel>
+      }
+    </div>
+  </div>
+</section>

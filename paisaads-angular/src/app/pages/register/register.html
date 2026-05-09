@@ -1,0 +1,56 @@
+<section class="auth-section">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Join PaisaAds and start posting your ads</p>
+      </div>
+
+      @if (error()) {
+        <div class="auth-error">{{ error() }}</div>
+      }
+
+      <form class="auth-form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Full Name</mat-label>
+          <input matInput [(ngModel)]="name" name="name" required placeholder="Enter your name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="email" name="email" type="email" required placeholder="Enter your email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Phone Number</mat-label>
+          <input matInput [(ngModel)]="phoneNumber" name="phoneNumber" required placeholder="+91 98765 43210" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Password</mat-label>
+          <input matInput [(ngModel)]="password" [type]="hidePassword ? 'password' : 'text'" name="password" required placeholder="Min 6 characters" />
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput [(ngModel)]="confirmPassword" [type]="hidePassword ? 'password' : 'text'" name="confirmPassword" required placeholder="Re-enter password" />
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" class="auth-submit-btn" [disabled]="loading()">
+          @if (loading()) {
+            Creating Account...
+          } @else {
+            Create Account
+          }
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p>Already have an account? <a routerLink="/login" class="auth-link">Log In</a></p>
+      </div>
+    </div>
+  </div>
+</section>

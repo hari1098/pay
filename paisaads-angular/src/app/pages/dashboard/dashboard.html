@@ -1,0 +1,27 @@
+<div class="dashboard-layout">
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-header">
+      <h3 class="sidebar-title">Dashboard</h3>
+      <p class="sidebar-user">{{ auth.currentUser()?.name }}</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard/my-ads" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>list_alt</mat-icon>
+        My Ads
+      </a>
+      <a routerLink="/dashboard/post-ad" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>add_circle</mat-icon>
+        Post Ad
+      </a>
+      <a routerLink="/dashboard/profile" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>person</mat-icon>
+        Profile
+      </a>
+    </nav>
+  </aside>
+
+  <main class="dashboard-main">
+    <router-outlet />
+  </main>
+</div>

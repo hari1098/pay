@@ -1,0 +1,53 @@
+<div class="page-content">
+  <h2 class="page-title">Configurations</h2>
+
+  @if (success()) {
+    <div class="success-message">Configurations saved successfully.</div>
+  }
+
+  <form class="config-form" (ngSubmit)="onSave()">
+    <div class="form-section">
+      <h3 class="form-section-title">Search Slogan</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Search Slogan</mat-label>
+        <input matInput [(ngModel)]="searchSlogan" name="searchSlogan" />
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">About Us Content</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>HTML Content</mat-label>
+        <textarea matInput [(ngModel)]="aboutUs" name="aboutUs" rows="5"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Contact Page Content</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>HTML Content</mat-label>
+        <textarea matInput [(ngModel)]="contactPage" name="contactPage" rows="5"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Privacy Policy</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>HTML Content</mat-label>
+        <textarea matInput [(ngModel)]="privacyPolicy" name="privacyPolicy" rows="5"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Terms and Conditions</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>HTML Content</mat-label>
+        <textarea matInput [(ngModel)]="termsAndConditions" name="termsAndConditions" rows="5"></textarea>
+      </mat-form-field>
+    </div>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="saving()">
+      @if (saving()) { Saving... } @else { Save Configurations }
+    </button>
+  </form>
+</div>

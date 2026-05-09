@@ -1,0 +1,42 @@
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <h3 class="sidebar-title">Admin Panel</h3>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/review-ads" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>rate_review</mat-icon>
+        Review Ads
+      </a>
+      <a routerLink="/admin/published-ads" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>check_circle</mat-icon>
+        Published Ads
+      </a>
+      <a routerLink="/admin/rejected-ads" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>cancel</mat-icon>
+        Rejected Ads
+      </a>
+      <a routerLink="/admin/users" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>people</mat-icon>
+        Users
+      </a>
+      <a routerLink="/admin/categories" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>category</mat-icon>
+        Categories
+      </a>
+      <a routerLink="/admin/reports" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>assessment</mat-icon>
+        Reports
+      </a>
+      <a routerLink="/admin/configurations" routerLinkActive="sidebar-link-active" class="sidebar-link">
+        <mat-icon>settings</mat-icon>
+        Configurations
+      </a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <router-outlet />
+  </main>
+</div>

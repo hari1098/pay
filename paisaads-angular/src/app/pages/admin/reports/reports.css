@@ -1,0 +1,13 @@
+.page-content { max-width: 900px; }
+.page-title { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin: 0 0 24px; }
+.loading-container { display: flex; justify-content: center; padding: 48px 0; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.stat-card { border-radius: 12px !important; }
+.stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.stat-icon mat-icon { font-size: 22px; width: 22px; height: 22px; }
+.stat-icon-blue { background: #e3f2fd; color: #1565c0; }
+.stat-icon-green { background: #e8f5e9; color: #2e7d32; }
+.stat-icon-orange { background: #fff3e0; color: #e65100; }
+.stat-icon-teal { background: #e0f2f1; color: #00695c; }
+.stat-icon-red { background: #fce4ec; color: #c62828; }
+.stat-value { font-size: 2rem; font-weight: 700; color: #1a1a2e; }
