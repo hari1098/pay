@@ -20,21 +20,23 @@ public class CategoryThree {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
+    @Column(name = "category_heading_font_color")
     private String categoryHeadingFontColor;
 
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", nullable = false)
+    @JoinColumn(name = "parent_id")
     private CategoryTwo parent;
 
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist

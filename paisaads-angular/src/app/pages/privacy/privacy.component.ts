@@ -1,32 +1,56 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { ConfigService } from '../../services/config.service';
+import { DatePipe } from '@angular/common';
+import { ApiService } from '../../shared/services/api.service';
+import { PrivacyPolicyData } from '../../shared/models/models';
 
 @Component({
   selector: 'app-privacy',
-  imports: [],
-  templateUrl: './privacy.html',
-  styleUrl: './privacy.css',
+  standalone: true,
+  imports: [DatePipe],
+  template: `
+    <div class="pt-20 px-4 pb-12">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Privacy Policy</h1>
+          <p class="text-lg text-gray-600 max-w-3xl mx-auto mt-4">Your privacy is important to us. This policy outlines how we collect, use, and protect your information.</p>
+        </div>
+        @if (isLoading()) {
+          <div class="animate-pulse space-y-4"><div class="h-8 bg-gray-200 rounded w-1/3"></div><div class="h-4 bg-gray-200 rounded w-full"></div></div>
+        } @else if (privacyData()) {
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            @if (privacyData()!.version) {
+              <div class="bg-white rounded-lg border shadow-sm p-4"><div class="flex items-center gap-2"><p class="text-sm text-gray-600">Version</p></div><p class="font-semibold">{{ privacyData()!.version }}</p></div>
+            }
+            @if (privacyData()!.effectiveDate) {
+              <div class="bg-white rounded-lg border shadow-sm p-4"><p class="text-sm text-gray-600">Effective Date</p><p class="font-semibold">{{ privacyData()!.effectiveDate | date }}</p></div>
+            }
+            @if (privacyData()!.lastUpdated) {
+              <div class="bg-white rounded-lg border shadow-sm p-4"><p class="text-sm text-gray-600">Last Updated</p><p class="font-semibold">{{ privacyData()!.lastUpdated | date }}</p></div>
+            }
+          </div>
+          <div class="bg-white rounded-lg border shadow-sm p-6 mb-8">
+            @if (privacyData()!.content) {
+              <div class="prose max-w-none text-gray-700 leading-relaxed" [innerHTML]="privacyData()!.content"></div>
+            } @else {
+              <div class="text-center py-12"><p class="text-gray-600">Privacy policy content is being updated.</p></div>
+            }
+          </div>
+        } @else {
+          <div class="text-center"><p class="text-gray-600">Privacy policy not available at the moment.</p></div>
+        }
+      </div>
+    </div>
+  `,
 })
 export class PrivacyComponent implements OnInit {
-  private readonly configService = inject(ConfigService);
+  private api = inject(ApiService);
+  privacyData = signal<PrivacyPolicyData | null>(null);
+  isLoading = signal(true);
 
-  readonly content = signal(`
-    <h2>Privacy Policy</h2>
-    <p>Last updated: January 2025</p>
-    <h3>Information We Collect</h3>
-    <p>We collect information you provide when registering, posting ads, or contacting us. This includes your name, email, phone number, and ad content.</p>
-    <h3>How We Use Your Information</h3>
-    <p>Your information is used to provide and improve our services, process your ads, communicate with you, and ensure platform safety.</p>
-    <h3>Data Protection</h3>
-    <p>We implement industry-standard security measures to protect your personal information from unauthorized access or disclosure.</p>
-    <h3>Your Rights</h3>
-    <p>You have the right to access, correct, or delete your personal data. Contact our support team for assistance with data requests.</p>
-  `);
-
-  ngOnInit(): void {
-    this.configService.getPrivacyPolicy().subscribe({
-      next: (res) => this.content.set(res.content),
-      error: () => {},
+  ngOnInit() {
+    this.api.getPrivacyPolicy().subscribe({
+      next: (data) => { this.privacyData.set(data); this.isLoading.set(false); },
+      error: () => this.isLoading.set(false),
     });
   }
 }

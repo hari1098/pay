@@ -1,51 +1,64 @@
 package com.paisaads.controller;
 
-import com.paisaads.dto.LoginRequest;
-import com.paisaads.dto.LoginResponse;
-import com.paisaads.dto.RegisterRequest;
-import com.paisaads.dto.UserProfileDto;
+import com.paisaads.dto.*;
 import com.paisaads.service.AuthService;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        LoginResponse response = authService.login(request);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<LoginResponse> register(@Valid @RequestBody RegisterRequest request) {
-        LoginResponse response = authService.register(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.login(request, response));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout() {
-        // JWT is stateless, client removes token
-        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        authService.logout(response);
+        return ResponseEntity.ok(Map.of());
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileDto> getProfile() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) auth.getPrincipal();
-        UserProfileDto profile = authService.getProfile(userId);
-        return ResponseEntity.ok(profile);
+    public ResponseEntity<?> profile(@CurrentSecurityContext(expression = "authentication.principal") Object principal) {
+        if (principal instanceof Map) {
+            Map<String, Object> user = (Map<String, Object>) principal;
+            return ResponseEntity.ok(authService.getProfile(user));
+        }
+        return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
+    }
+
+    @PostMapping("/viewer-login")
+    public ResponseEntity<?> viewerLogin(@RequestBody Map<String, String> body, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.viewerLogin(body.get("phone"), response));
+    }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> body) {
+        return ResponseEntity.ok(authService.sendOtp(body.get("phone")));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> body, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.verifyOtp(body.get("phone"), body.get("otp"), response));
+    }
+
+    @PostMapping("/send-verification-otp")
+    public ResponseEntity<?> sendVerificationOtp(@RequestBody Map<String, String> body) {
+        return ResponseEntity.ok(authService.sendVerificationOtp(body.get("phone")));
+    }
+
+    @PostMapping("/verify-account")
+    public ResponseEntity<?> verifyAccount(@RequestBody Map<String, String> body, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.verifyAccount(body.get("phone"), body.get("otp"), response));
     }
 }

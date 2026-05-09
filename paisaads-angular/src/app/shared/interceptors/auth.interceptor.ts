@@ -1,12 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('paisaads_token');
-  if (token) {
-    const cloned = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${token}`)
-    });
-    return next(cloned);
-  }
+  // Angular HttpClient withCredentials handles cookies automatically
+  // This interceptor can add additional headers if needed
   return next(req);
 };

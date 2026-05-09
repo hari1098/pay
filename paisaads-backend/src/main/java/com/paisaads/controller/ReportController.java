@@ -1,106 +1,189 @@
 package com.paisaads.controller;
 
+import com.paisaads.dto.AdvancedFilterDto;
 import com.paisaads.enums.AdStatus;
-import com.paisaads.repository.*;
+import com.paisaads.enums.AdType;
+import com.paisaads.service.ReportService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/reports")
+@RequestMapping("/reports")
+@RequiredArgsConstructor
 public class ReportController {
 
-    private final LineAdRepository lineAdRepository;
-    private final PosterAdRepository posterAdRepository;
-    private final VideoAdRepository videoAdRepository;
-    private final UserRepository userRepository;
-    private final PaymentRepository paymentRepository;
+    private final ReportService reportService;
 
-    public ReportController(LineAdRepository lineAdRepository,
-                            PosterAdRepository posterAdRepository,
-                            VideoAdRepository videoAdRepository,
-                            UserRepository userRepository,
-                            PaymentRepository paymentRepository) {
-        this.lineAdRepository = lineAdRepository;
-        this.posterAdRepository = posterAdRepository;
-        this.videoAdRepository = videoAdRepository;
-        this.userRepository = userRepository;
-        this.paymentRepository = paymentRepository;
+    @GetMapping("/line-ad-stats")
+    public ResponseEntity<Object> getLineAdStats() {
+        return ResponseEntity.ok(reportService.getLineAdStats());
+    }
+
+    @GetMapping("/line-ads")
+    public ResponseEntity<Object> getLineAdsByStatusAndTimeFrame(
+            @RequestParam AdStatus status,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(reportService.getLineAdsByStatusAndTimeFrame(
+            status, startDate, endDate, page, limit));
+    }
+
+    @GetMapping("/ad-stats")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getAdStats(
+            @RequestParam AdType type,
+            @RequestParam AdStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        return ResponseEntity.ok(reportService.getAdStats(type, status, page, limit));
+    }
+
+    @GetMapping("/filtered-ads")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getFilteredAds(AdvancedFilterDto filters) {
+        return ResponseEntity.ok(reportService.getFilteredAds(filters));
+    }
+
+    @GetMapping("/filtered-stats")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getFilteredAdStats(AdvancedFilterDto filters) {
+        return ResponseEntity.ok(reportService.getFilteredAdStats(filters));
+    }
+
+    @GetMapping("/categories")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getCategoriesForFilters() {
+        return ResponseEntity.ok(reportService.getCategoriesForFilters());
+    }
+
+    @GetMapping("/user-types")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getUserTypesForFilters() {
+        return ResponseEntity.ok(reportService.getUserTypesForFilters());
+    }
+
+    @GetMapping("/locations")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getLocationsForFilters() {
+        return ResponseEntity.ok(reportService.getLocationsForFilters());
+    }
+
+    @GetMapping("/export")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> exportFilteredAds(
+            AdvancedFilterDto filters,
+            @RequestParam(defaultValue = "csv") String format) {
+        return ResponseEntity.ok(reportService.exportFilteredAds(filters, format));
+    }
+
+    @GetMapping("/users/registrations")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getUserRegistrationReport(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam(defaultValue = "daily") String period) {
+        return ResponseEntity.ok(reportService.getUserRegistrationReport(startDate, endDate, period));
+    }
+
+    @GetMapping("/users/active-vs-inactive")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getActiveVsInactiveUsersReport() {
+        return ResponseEntity.ok(reportService.getActiveVsInactiveUsersReport());
+    }
+
+    @GetMapping("/users/login-activity")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getUserLoginActivityReport(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam(defaultValue = "daily") String period) {
+        return ResponseEntity.ok(reportService.getUserLoginActivityReport(startDate, endDate, period));
+    }
+
+    @GetMapping("/users/views-by-category")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getUserViewsByCategoryReport() {
+        return ResponseEntity.ok(reportService.getUserViewsByCategoryReport());
+    }
+
+    @GetMapping("/admin/activity")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getAdminActivityReport(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam(defaultValue = "daily") String period,
+            @RequestParam(required = false) String adminId) {
+        return ResponseEntity.ok(reportService.getAdminActivityReport(startDate, endDate, period, adminId));
     }
 
     @GetMapping("/admin/user-wise-activity")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
-    public ResponseEntity<List<Map<String, Object>>> getUserWiseActivity() {
-        List<Map<String, Object>> result = new ArrayList<>();
-        userRepository.findAll().forEach(user -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("userId", user.getId().toString());
-            map.put("userName", user.getName());
-            map.put("role", user.getRole().name());
-            map.put("totalLineAds", lineAdRepository.countByCustomerId(
-                    user.getId())); // simplified
-            map.put("totalPosterAds", posterAdRepository.countByCustomerId(
-                    user.getId()));
-            map.put("totalVideoAds", videoAdRepository.countByCustomerId(
-                    user.getId()));
-            result.add(map);
-        });
-        return ResponseEntity.ok(result);
+    public ResponseEntity<Object> getAdminUserWiseActivityReport(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        return ResponseEntity.ok(reportService.getAdminUserWiseActivityReport(startDate, endDate));
     }
 
     @GetMapping("/admin/activity-by-category")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
-    public ResponseEntity<Map<String, Object>> getActivityByCategory() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("lineAdsByStatus", Map.of(
-                "published", lineAdRepository.countByStatus(AdStatus.PUBLISHED),
-                "forReview", lineAdRepository.countByStatus(AdStatus.FOR_REVIEW),
-                "draft", lineAdRepository.countByStatus(AdStatus.DRAFT),
-                "rejected", lineAdRepository.countByStatus(AdStatus.REJECTED),
-                "onHold", lineAdRepository.countByStatus(AdStatus.ON_HOLD)
-        ));
-        result.put("posterAdsByStatus", Map.of(
-                "published", posterAdRepository.countByStatus(AdStatus.PUBLISHED),
-                "forReview", posterAdRepository.countByStatus(AdStatus.FOR_REVIEW),
-                "draft", posterAdRepository.countByStatus(AdStatus.DRAFT),
-                "rejected", posterAdRepository.countByStatus(AdStatus.REJECTED),
-                "onHold", posterAdRepository.countByStatus(AdStatus.ON_HOLD)
-        ));
-        result.put("videoAdsByStatus", Map.of(
-                "published", videoAdRepository.countByStatus(AdStatus.PUBLISHED),
-                "forReview", videoAdRepository.countByStatus(AdStatus.FOR_REVIEW),
-                "draft", videoAdRepository.countByStatus(AdStatus.DRAFT),
-                "rejected", videoAdRepository.countByStatus(AdStatus.REJECTED),
-                "onHold", videoAdRepository.countByStatus(AdStatus.ON_HOLD)
-        ));
-        return ResponseEntity.ok(result);
+    public ResponseEntity<Object> getAdminActivityByCategoryReport(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        return ResponseEntity.ok(reportService.getAdminActivityByCategoryReport(startDate, endDate));
+    }
+
+    @GetMapping("/listings/analytics")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getListingAnalyticsReport(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        return ResponseEntity.ok(reportService.getListingAnalyticsReport(startDate, endDate));
     }
 
     @GetMapping("/listings/active-by-category")
-    public ResponseEntity<Map<String, Object>> getActiveListingsByCategory() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("publishedLineAds", lineAdRepository.countByStatus(AdStatus.PUBLISHED));
-        result.put("publishedPosterAds", posterAdRepository.countByStatus(AdStatus.PUBLISHED));
-        result.put("publishedVideoAds", videoAdRepository.countByStatus(AdStatus.PUBLISHED));
-        return ResponseEntity.ok(result);
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getActiveListingsByCategory() {
+        return ResponseEntity.ok(reportService.getActiveListingsByCategory());
+    }
+
+    @GetMapping("/listings/approval-times")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getApprovalTimeReport() {
+        return ResponseEntity.ok(reportService.getApprovalTimeReport());
+    }
+
+    @GetMapping("/listings/by-user")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getListingsByUserReport() {
+        return ResponseEntity.ok(reportService.getListingsByUserReport());
     }
 
     @GetMapping("/payments/transactions")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR')")
-    public ResponseEntity<List<Map<String, Object>>> getPaymentTransactions() {
-        List<Map<String, Object>> result = new ArrayList<>();
-        paymentRepository.findAll().forEach(payment -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", payment.getId().toString());
-            map.put("amount", payment.getAmount());
-            map.put("paymentMethod", payment.getPaymentMethod());
-            map.put("status", payment.getStatus());
-            map.put("razorpayOrderId", payment.getRazorpayOrderId());
-            map.put("createdAt", payment.getCreatedAt().toString());
-            result.add(map);
-        });
-        return ResponseEntity.ok(result);
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getPaymentTransactionReport(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam(defaultValue = "daily") String period) {
+        return ResponseEntity.ok(reportService.getPaymentTransactionReport(startDate, endDate, period));
+    }
+
+    @GetMapping("/payments/revenue-by-product")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getRevenueByProduct() {
+        return ResponseEntity.ok(reportService.getRevenueByProduct());
+    }
+
+    @GetMapping("/payments/revenue-by-category")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','EDITOR','REVIEWER')")
+    public ResponseEntity<Object> getRevenueByCategoryReport() {
+        return ResponseEntity.ok(reportService.getRevenueByCategoryReport());
     }
 }

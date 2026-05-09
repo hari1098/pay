@@ -1,47 +1,31 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { ConfigService } from '../../../services/config.service';
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-configurations',
-  imports: [FormsModule, MatButton, MatFormField, MatLabel, MatInput],
-  templateUrl: './configurations.html',
-  styleUrl: './configurations.css',
+  selector: 'app-admin-configurations',
+  standalone: true,
+  imports: [RouterLink],
+  template: `
+    <div class="space-y-6">
+      <h1 class="text-2xl font-bold">Configurations</h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (config of configItems; track config.title) {
+          <a [routerLink]="config.href" class="bg-white rounded-lg border shadow-sm p-6 hover:shadow-md transition-shadow">
+            <h3 class="text-lg font-semibold">{{ config.title }}</h3>
+            <p class="text-sm text-gray-500 mt-2">{{ config.description }}</p>
+          </a>
+        }
+      </div>
+    </div>
+  `,
 })
-export class ConfigurationsComponent implements OnInit {
-  private readonly configService = inject(ConfigService);
-
-  readonly loading = signal(true);
-  readonly saving = signal(false);
-  readonly success = signal(false);
-
-  searchSlogan = '';
-  aboutUs = '';
-  contactPage = '';
-  privacyPolicy = '';
-  termsAndConditions = '';
-
-  ngOnInit(): void {
-    this.configService.getSearchSlogan().subscribe({
-      next: (res) => { this.searchSlogan = res.slogan; this.loading.set(false); },
-      error: () => this.loading.set(false),
-    });
-    this.configService.getAboutUs().subscribe({ next: (res) => this.aboutUs = res.content, error: () => {} });
-    this.configService.getContactPage().subscribe({ next: (res) => this.contactPage = res.content, error: () => {} });
-    this.configService.getPrivacyPolicy().subscribe({ next: (res) => this.privacyPolicy = res.content, error: () => {} });
-    this.configService.getTermsAndConditions().subscribe({ next: (res) => this.termsAndConditions = res.content, error: () => {} });
-  }
-
-  onSave(): void {
-    this.saving.set(true);
-    this.success.set(false);
-    // In a real app, this would call the config service to save changes
-    setTimeout(() => {
-      this.saving.set(false);
-      this.success.set(true);
-    }, 800);
-  }
+export class ConfigurationsComponent {
+  configItems = [
+    { title: 'Ad Pricing', href: '/mgmt/dashboard/configurations/ad-pricing', description: 'Configure ad pricing settings' },
+    { title: 'Privacy Policy', href: '/mgmt/dashboard/configurations/privacy-policy', description: 'Edit privacy policy content' },
+    { title: 'Search Slogan', href: '/mgmt/dashboard/configurations/search-slogan', description: 'Update search page slogans' },
+    { title: 'FAQ', href: '/mgmt/dashboard/configurations/faq', description: 'Manage FAQ content' },
+    { title: 'Contact Page', href: '/mgmt/dashboard/configurations/contact-page', description: 'Edit contact page information' },
+    { title: 'Terms and Conditions', href: '/mgmt/dashboard/configurations/tc', description: 'Edit terms and conditions' },
+  ];
 }

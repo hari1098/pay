@@ -20,26 +20,27 @@ public class Image {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "file_name")
     private String fileName;
 
-    @Column(nullable = false)
+    @Column(name = "file_path")
     private String filePath;
 
-    @Column(nullable = false)
-    private Boolean isTemp = false;
+    @Column(name = "is_temp")
+    private Boolean isTemp = true;
 
+    @Column(name = "uploaded_on")
     private LocalDateTime uploadedOn;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "line_ad_id")
     private LineAd lineAd;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poster_ad_id")
     private PosterAd posterAd;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_ad_id")
     private VideoAd videoAd;
 
@@ -47,18 +48,21 @@ public class Image {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Column(updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_proof_id")
+    private Payment paymentProof;
+
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (uploadedOn == null) {
-            uploadedOn = LocalDateTime.now();
-        }
+        if (uploadedOn == null) uploadedOn = LocalDateTime.now();
     }
 
     @PreUpdate

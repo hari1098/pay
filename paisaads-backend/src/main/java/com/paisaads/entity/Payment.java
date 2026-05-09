@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,20 +21,39 @@ public class Payment {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
-    private Double amount;
+    @Column
+    private String method;
 
-    private String paymentMethod;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal amount;
 
-    private String status;
+    @Column
+    private String details;
 
-    private String razorpayOrderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-    private String razorpayPaymentId;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "proof_id")
+    private Image proof;
 
-    @Column(updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "line_ad_id")
+    private LineAd lineAd;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_ad_id")
+    private PosterAd posterAd;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "video_ad_id")
+    private VideoAd videoAd;
+
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist

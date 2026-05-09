@@ -1,5 +1,6 @@
 package com.paisaads.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -22,25 +23,29 @@ public class MainCategory {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
+    @Column(name = "category_heading_font_color")
     private String categoryHeadingFontColor;
 
+    @Column(name = "categories_color")
     private String categoriesColor;
 
+    @Column(name = "font_color")
     private String fontColor;
 
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("name ASC")
     private List<CategoryOne> subCategories = new ArrayList<>();
 
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist

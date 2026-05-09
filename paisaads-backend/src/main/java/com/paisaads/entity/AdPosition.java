@@ -1,5 +1,6 @@
 package com.paisaads.entity;
 
+import com.paisaads.enums.AdType;
 import com.paisaads.enums.PageType;
 import com.paisaads.enums.PositionType;
 import jakarta.persistence.*;
@@ -22,26 +23,37 @@ public class AdPosition {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PageType pageType;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "video_ad_id")
+    private VideoAd videoAd;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_ad_id")
+    private PosterAd posterAd;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "line_ad_id")
+    private LineAd lineAd;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "ad_type")
+    private AdType adType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "page_type")
+    private PageType pageType = PageType.HOME;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "side")
     private PositionType side;
 
-    @Column(nullable = false)
-    private Integer position;
+    @Column(name = "position")
+    private Integer position = 0;
 
-    @Column(nullable = false)
-    private String adType;
-
-    @Column(nullable = false)
-    private UUID adId;
-
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist

@@ -1,5 +1,6 @@
 package com.paisaads.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.paisaads.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,34 +22,45 @@ public class User {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, name = "phone_number")
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(name = "secondary_number")
+    private String secondaryNumber;
+
+    @Column
+    @JsonIgnoreProperties
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column
+    private Role role = Role.USER;
 
-    @Column(nullable = false)
+    @Column(name = "is_active")
     private Boolean isActive = true;
 
-    @Column(nullable = false)
-    private Boolean emailVerified = false;
+    @Column(name = "email_verified")
+    private Boolean emailVerified = true;
 
-    @Column(nullable = false)
+    @Column(name = "phone_verified")
     private Boolean phoneVerified = false;
 
-    @Column(updatable = false)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Admin admin;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Customer customer;
+
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist

@@ -1,104 +1,86 @@
 package com.paisaads.service;
 
+import com.paisaads.entity.*;
 import com.paisaads.enums.AdStatus;
 import com.paisaads.repository.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class DashboardService {
 
     private final LineAdRepository lineAdRepository;
     private final PosterAdRepository posterAdRepository;
     private final VideoAdRepository videoAdRepository;
     private final UserRepository userRepository;
+    private final AdCommentRepository adCommentRepository;
 
-    public DashboardService(LineAdRepository lineAdRepository,
-                            PosterAdRepository posterAdRepository,
-                            VideoAdRepository videoAdRepository,
-                            UserRepository userRepository) {
-        this.lineAdRepository = lineAdRepository;
-        this.posterAdRepository = posterAdRepository;
-        this.videoAdRepository = videoAdRepository;
-        this.userRepository = userRepository;
-    }
+    public Map<String, Object> getUserDashboard(UUID userId) {
+        Map<String, Object> dashboard = new HashMap<>();
 
-    public Map<String, Object> getUserDashboard(UUID customerId) {
-        Map<String, Object> stats = new HashMap<>();
+        List<LineAd> lineAds = lineAdRepository.findAllActive().stream()
+            .filter(ad -> ad.getCustomer() != null && ad.getCustomer().getUser() != null
+                && ad.getCustomer().getUser().getId().equals(userId))
+            .toList();
+        List<PosterAd> posterAds = posterAdRepository.findAllActive().stream()
+            .filter(ad -> ad.getCustomer() != null && ad.getCustomer().getUser() != null
+                && ad.getCustomer().getUser().getId().equals(userId))
+            .toList();
+        List<VideoAd> videoAds = videoAdRepository.findAllActive().stream()
+            .filter(ad -> ad.getCustomer() != null && ad.getCustomer().getUser() != null
+                && ad.getCustomer().getUser().getId().equals(userId))
+            .toList();
 
-        long totalLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED)
-                + lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.FOR_REVIEW)
-                + lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.DRAFT)
-                + lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.REJECTED)
-                + lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.ON_HOLD);
+        Map<String, Long> lineAdStatusCounts = new HashMap<>();
+        for (AdStatus s : AdStatus.values()) {
+            lineAdStatusCounts.put(s.name(), lineAds.stream().filter(a -> a.getStatus() == s).count());
+        }
+        Map<String, Long> posterAdStatusCounts = new HashMap<>();
+        for (AdStatus s : AdStatus.values()) {
+            posterAdStatusCounts.put(s.name(), posterAds.stream().filter(a -> a.getStatus() == s).count());
+        }
+        Map<String, Long> videoAdStatusCounts = new HashMap<>();
+        for (AdStatus s : AdStatus.values()) {
+            videoAdStatusCounts.put(s.name(), videoAds.stream().filter(a -> a.getStatus() == s).count());
+        }
 
-        long activeLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED);
-        long draftLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.DRAFT);
-        long reviewLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.FOR_REVIEW);
-        long rejectedLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.REJECTED);
-        long onHoldLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.ON_HOLD);
-
-        long totalPosterAds = posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED)
-                + posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.FOR_REVIEW)
-                + posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.DRAFT)
-                + posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.REJECTED)
-                + posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.ON_HOLD);
-
-        long activePosterAds = posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED);
-
-        long totalVideoAds = videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED)
-                + videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.FOR_REVIEW)
-                + videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.DRAFT)
-                + videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.REJECTED)
-                + videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.ON_HOLD);
-
-        long activeVideoAds = videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED);
-
-        stats.put("totalAds", totalLineAds + totalPosterAds + totalVideoAds);
-        stats.put("activeAds", activeLineAds + activePosterAds + activeVideoAds);
-        stats.put("draftAds", draftLineAds);
-        stats.put("reviewAds", reviewLineAds);
-        stats.put("rejectedAds", rejectedLineAds);
-        stats.put("onHoldAds", onHoldLineAds);
-        stats.put("lineAds", totalLineAds);
-        stats.put("posterAds", totalPosterAds);
-        stats.put("videoAds", totalVideoAds);
-
-        return stats;
+        dashboard.put("lineAds", Map.of("total", lineAds.size(), "statusCounts", lineAdStatusCounts));
+        dashboard.put("posterAds", Map.of("total", posterAds.size(), "statusCounts", posterAdStatusCounts));
+        dashboard.put("videoAds", Map.of("total", videoAds.size(), "statusCounts", videoAdStatusCounts));
+        dashboard.put("totalAds", lineAds.size() + posterAds.size() + videoAds.size());
+        return dashboard;
     }
 
     public Map<String, Object> getGlobalDashboard() {
-        Map<String, Object> stats = new HashMap<>();
+        Map<String, Object> dashboard = new HashMap<>();
+
+        List<LineAd> lineAds = lineAdRepository.findAllActive();
+        List<PosterAd> posterAds = posterAdRepository.findAllActive();
+        List<VideoAd> videoAds = videoAdRepository.findAllActive();
+
+        Map<String, Long> lineAdStatusCounts = new HashMap<>();
+        for (AdStatus s : AdStatus.values()) {
+            lineAdStatusCounts.put(s.name(), lineAds.stream().filter(a -> a.getStatus() == s).count());
+        }
+        Map<String, Long> posterAdStatusCounts = new HashMap<>();
+        for (AdStatus s : AdStatus.values()) {
+            posterAdStatusCounts.put(s.name(), posterAds.stream().filter(a -> a.getStatus() == s).count());
+        }
+        Map<String, Long> videoAdStatusCounts = new HashMap<>();
+        for (AdStatus s : AdStatus.values()) {
+            videoAdStatusCounts.put(s.name(), videoAds.stream().filter(a -> a.getStatus() == s).count());
+        }
 
         long totalUsers = userRepository.count();
-        long totalLineAds = lineAdRepository.count();
-        long totalPosterAds = posterAdRepository.count();
-        long totalVideoAds = videoAdRepository.count();
 
-        long publishedLineAds = lineAdRepository.countByStatus(AdStatus.PUBLISHED);
-        long publishedPosterAds = posterAdRepository.countByStatus(AdStatus.PUBLISHED);
-        long publishedVideoAds = videoAdRepository.countByStatus(AdStatus.PUBLISHED);
-
-        long reviewLineAds = lineAdRepository.countByStatus(AdStatus.FOR_REVIEW);
-        long reviewPosterAds = posterAdRepository.countByStatus(AdStatus.FOR_REVIEW);
-        long reviewVideoAds = videoAdRepository.countByStatus(AdStatus.FOR_REVIEW);
-
-        long rejectedLineAds = lineAdRepository.countByStatus(AdStatus.REJECTED);
-        long rejectedPosterAds = posterAdRepository.countByStatus(AdStatus.REJECTED);
-        long rejectedVideoAds = videoAdRepository.countByStatus(AdStatus.REJECTED);
-
-        stats.put("totalUsers", totalUsers);
-        stats.put("totalAds", totalLineAds + totalPosterAds + totalVideoAds);
-        stats.put("publishedAds", publishedLineAds + publishedPosterAds + publishedVideoAds);
-        stats.put("reviewAds", reviewLineAds + reviewPosterAds + reviewVideoAds);
-        stats.put("rejectedAds", rejectedLineAds + rejectedPosterAds + rejectedVideoAds);
-        stats.put("lineAds", totalLineAds);
-        stats.put("posterAds", totalPosterAds);
-        stats.put("videoAds", totalVideoAds);
-
-        return stats;
+        dashboard.put("lineAds", Map.of("total", lineAds.size(), "statusCounts", lineAdStatusCounts));
+        dashboard.put("posterAds", Map.of("total", posterAds.size(), "statusCounts", posterAdStatusCounts));
+        dashboard.put("videoAds", Map.of("total", videoAds.size(), "statusCounts", videoAdStatusCounts));
+        dashboard.put("totalAds", lineAds.size() + posterAds.size() + videoAds.size());
+        dashboard.put("totalUsers", totalUsers);
+        return dashboard;
     }
 }

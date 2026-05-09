@@ -1,17 +1,16 @@
 package com.paisaads.repository;
 
 import com.paisaads.entity.Customer;
-import com.paisaads.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
-
-    Optional<Customer> findByUser(User user);
-
-    boolean existsByUser(User user);
+    Optional<Customer> findByUserId(UUID userId);
+    
+    @Query("SELECT c FROM Customer c LEFT JOIN FETCH c.user WHERE c.id = :id")
+    Optional<Customer> findByIdWithUser(@Param("id") UUID id);
 }

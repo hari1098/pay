@@ -1,9 +1,8 @@
 package com.paisaads.service;
 
-import com.paisaads.entity.Customer;
 import com.paisaads.entity.Image;
-import com.paisaads.repository.CustomerRepository;
 import com.paisaads.repository.ImageRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,60 +15,60 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ImageService {
 
     private final ImageRepository imageRepository;
-    private final CustomerRepository customerRepository;
 
-    @Value("${app.upload.dir:uploads}")
+    @Value("${file.upload-dir:uploads}")
     private String uploadDir;
 
-    public ImageService(ImageRepository imageRepository, CustomerRepository customerRepository) {
-        this.imageRepository = imageRepository;
-        this.customerRepository = customerRepository;
+    @Transactional
+    public Image uploadImage(MultipartFile file, UUID userId) {
+        try {
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String originalFileName = file.getOriginalFilename();
+            String fileName = UUID.randomUUID() + "_" + originalFileName;
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath);
+
+            Image image = new Image();
+            image.setFileName(originalFileName);
+            image.setFilePath("/" + uploadDir + "/" + fileName);
+            image.setIsTemp(true);
+            return imageRepository.save(image);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload image: " + e.getMessage());
+        }
     }
 
     @Transactional
-    public Image uploadImage(MultipartFile file, UUID customerId) throws IOException {
-        // Create upload directory if it doesn't exist
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-
-        // Generate unique file name
-        String originalFileName = file.getOriginalFilename();
-        String fileName = UUID.randomUUID() + "_" + originalFileName;
-        Path filePath = uploadPath.resolve(fileName);
-
-        // Save file to disk
-        Files.copy(file.getInputStream(), filePath);
-
-        // Save image record to database
-        Image image = new Image();
-        image.setFileName(fileName);
-        image.setFilePath("/uploads/" + fileName);
-        image.setIsTemp(true);
-
-        if (customerId != null) {
-            Customer customer = customerRepository.findById(customerId).orElse(null);
-            image.setCustomer(customer);
-        }
-
-        image = imageRepository.save(image);
-        return image;
+    public Image confirmImage(UUID imageId) {
+        Image image = imageRepository.findById(imageId)
+            .orElseThrow(() -> new RuntimeException("Image not found"));
+        image.setIsTemp(false);
+        return imageRepository.save(image);
     }
 
     public Image getImageById(UUID id) {
         return imageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Image not found"));
+            .orElseThrow(() -> new RuntimeException("Image not found"));
     }
 
     @Transactional
-    public void markImageAsPermanent(UUID imageId) {
-        Image image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new RuntimeException("Image not found"));
-        image.setIsTemp(false);
-        imageRepository.save(image);
+    public void deleteImage(UUID id) {
+        Image image = imageRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Image not found"));
+        try {
+            Path filePath = Paths.get(image.getFilePath().substring(1));
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            // File may not exist on disk, ignore
+        }
+        imageRepository.deleteById(id);
     }
 }

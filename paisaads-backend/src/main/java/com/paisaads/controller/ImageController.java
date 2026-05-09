@@ -2,9 +2,9 @@ package com.paisaads.controller;
 
 import com.paisaads.entity.Image;
 import com.paisaads.service.ImageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,40 +12,41 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/images")
+@RequestMapping("/images")
+@RequiredArgsConstructor
 public class ImageController {
 
     private final ImageService imageService;
 
-    public ImageController(ImageService imageService) {
-        this.imageService = imageService;
-    }
-
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadImage(
+            @RequestParam("file") MultipartFile file,
+            @CurrentSecurityContext(expression = "authentication.principal") Object principal) {
         try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String userId = auth.getPrincipal().toString();
-
-            Image image = imageService.uploadImage(file, UUID.fromString(userId));
+            UUID userId = extractUserId(principal);
+            Image image = imageService.uploadImage(file, userId);
             return ResponseEntity.ok(Map.of(
-                    "id", image.getId().toString(),
-                    "fileName", image.getFileName(),
-                    "filePath", image.getFilePath()
+                "id", image.getId().toString(),
+                "fileName", image.getFileName(),
+                "filePath", image.getFilePath()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getImage(@PathVariable UUID id) {
-        Image image = imageService.getImageById(id);
-        return ResponseEntity.ok(Map.of(
-                "id", image.getId().toString(),
-                "fileName", image.getFileName(),
-                "filePath", image.getFilePath(),
-                "isTemp", image.getIsTemp()
-        ));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteImage(@PathVariable UUID id) {
+        imageService.deleteImage(id);
+        return ResponseEntity.ok(Map.of("message", "Image deleted successfully"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private UUID extractUserId(Object principal) {
+        if (principal instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) principal;
+            return UUID.fromString(map.get("sub").toString());
+        }
+        throw new RuntimeException("Unable to extract user ID");
     }
 }

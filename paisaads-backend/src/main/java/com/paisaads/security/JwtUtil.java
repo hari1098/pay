@@ -8,59 +8,66 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
 
-    private final SecretKey key;
-    private final long expiration;
+    @Value("${jwt.secret}")
+    private String secret;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret,
-                   @Value("${jwt.expiration}") long expiration) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.expiration = expiration;
+    @Value("${jwt.expiration}")
+    private long expiration;
+
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String userId, String phone, String role) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expiration);
+    public String generateToken(UUID userId, String name, String role, Boolean phoneVerified, String phone) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("name", name);
+        claims.put("sub", userId != null ? userId.toString() : null);
+        claims.put("role", role);
+        claims.put("phone_verified", phoneVerified);
+        if (phone != null) claims.put("phone", phone);
 
         return Jwts.builder()
-                .subject(userId)
-                .claim("phone", phone)
-                .claim("role", role)
-                .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(key)
+                .claims(claims)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey())
                 .compact();
     }
 
-    public String extractUserId(String token) {
-        return getClaims(token).getSubject();
+    public String generateViewerToken(String phone) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("sub", null);
+        claims.put("role", "VIEWER");
+        claims.put("phone", phone);
+
+        return Jwts.builder()
+                .claims(claims)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey())
+                .compact();
     }
 
-    public String extractPhone(String token) {
-        return getClaims(token).get("phone", String.class);
-    }
-
-    public String extractRole(String token) {
-        return getClaims(token).get("role", String.class);
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            getClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    private Claims getClaims(String token) {
+    public Claims validateToken(String token) {
         return Jwts.parser()
-                .verifyWith(key)
+                .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            validateToken(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

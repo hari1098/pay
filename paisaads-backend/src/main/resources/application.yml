@@ -17,14 +17,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:data.sql
 
 jwt:
   secret: paisaads-super-secret-jwt-key-2024-must-be-at-least-256-bits-long-for-hs256
-  expiration: 86400000
+  expiration: 259200000
 
 cors:
   allowed-origins: http://localhost:4200,http://localhost:3000
+
+file:
+  upload-dir: uploads

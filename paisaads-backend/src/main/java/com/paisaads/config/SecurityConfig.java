@@ -32,13 +32,36 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/configurations/**").permitAll()
-                .requestMatchers("/api/categories/**").permitAll()
-                .requestMatchers("/api/*/today").permitAll()
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/users/register-customer").permitAll()
+                .requestMatchers("/categories/tree").permitAll()
+                .requestMatchers("/categories/main/**").permitAll()
+                .requestMatchers("/configurations/**").permitAll()
+                .requestMatchers("/line-ad/today").permitAll()
+                .requestMatchers("/line-ad").permitAll()
+                .requestMatchers("/line-ad/search").permitAll()
+                .requestMatchers("/line-ad/category/**").permitAll()
+                .requestMatchers("/line-ad/*").permitAll()
+                .requestMatchers("/poster-ad/today").permitAll()
+                .requestMatchers("/poster-ad").permitAll()
+                .requestMatchers("/poster-ad/search").permitAll()
+                .requestMatchers("/poster-ad/category/**").permitAll()
+                .requestMatchers("/poster-ad/*").permitAll()
+                .requestMatchers("/video-ad/today").permitAll()
+                .requestMatchers("/video-ad").permitAll()
+                .requestMatchers("/video-ad/search").permitAll()
+                .requestMatchers("/video-ad/category/**").permitAll()
+                .requestMatchers("/video-ad/*").permitAll()
+                .requestMatchers("/images/upload").permitAll()
+                .requestMatchers("/ad-position/ad-slots/**").permitAll()
+                .requestMatchers("/ad-comments/ad/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Allow H2 console frames
+        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
     }

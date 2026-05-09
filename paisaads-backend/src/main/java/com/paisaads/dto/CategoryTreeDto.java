@@ -1,55 +1,34 @@
 package com.paisaads.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CategoryTreeDto {
-
-    private UUID id;
     private String name;
     private String categoryHeadingFontColor;
     private String categoriesColor;
     private String fontColor;
-    private Boolean isActive;
-    private List<SubCategoryOneDto> subCategories = new ArrayList<>();
+    private List<CategoryOneDto> subCategories;
 
     @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SubCategoryOneDto {
-        private UUID id;
+    public static class CategoryOneDto {
         private String name;
         private String categoryHeadingFontColor;
-        private Boolean isActive;
-        private List<SubCategoryTwoDto> subCategories = new ArrayList<>();
+        private List<CategoryTwoDto> subCategories;
     }
 
     @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SubCategoryTwoDto {
-        private UUID id;
+    public static class CategoryTwoDto {
         private String name;
         private String categoryHeadingFontColor;
-        private Boolean isActive;
-        private List<SubCategoryThreeDto> subCategories = new ArrayList<>();
+        private List<CategoryThreeDto> subCategories;
     }
 
     @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SubCategoryThreeDto {
-        private UUID id;
+    public static class CategoryThreeDto {
         private String name;
         private String categoryHeadingFontColor;
-        private Boolean isActive;
     }
 }
