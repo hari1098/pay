@@ -79,7 +79,7 @@ import { ApiService } from '../../shared/services/api.service';
                 }
               </div>
             } @else {
-              <button class="rounded-full px-4 font-semibold shadow-md border-2 border-[#1a1a2e]/40 text-[#1a1a2e] hover:bg-[#1a1a2e]/10 transition-colors" (click)="isViewAdOpen.set(true)">View Ads</button>
+              <button class="rounded-full px-4 font-semibold shadow-md border-2 border-[#1a1a2e] text-[#1a1a2e] hover:bg-[#1a1a2e]/10 transition-colors" (click)="isViewAdOpen.set(true)">View Ads</button>
               <button class="rounded-full px-4 font-semibold shadow-md border-2 border-[#1a1a2e] text-white bg-[#1a1a2e] hover:bg-[#1a1a2e]/90 transition-colors" (click)="isLoginOpen.set(true)">Post Ad</button>
             }
           </div>

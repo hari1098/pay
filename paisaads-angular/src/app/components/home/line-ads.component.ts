@@ -26,7 +26,7 @@ import { LineAdCardComponent } from './line-ad-card.component';
             }
           </div>
         } @else if (data().length > 0) {
-          <div class="columns-1 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-8 transition-all ease-in">
+          <div class="columns-1 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4 transition-all duration-300">
             @for (ad of paginatedItems(); track ad.id) {
               <app-line-ad-card [ad]="ad" />
             }
