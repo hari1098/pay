@@ -5,41 +5,58 @@ A full-stack classified ads platform for posting and browsing advertisements acr
 ## Architecture
 
 ```
-Frontend (Next.js 15 + React 19)  -->  Supabase Edge Functions (Hono API)  -->  Supabase PostgreSQL
-        :3000                                    :supabase.co/functions/v1/paisaads-api
+Frontend (Angular 20 + TypeScript)  -->  Backend (Spring Boot 3 + Java 21)  -->  MySQL
+        :4200                                      :8080
 ```
 
-- **Frontend**: Next.js 15 App Router, Tailwind CSS 4, shadcn/ui, TanStack Query, Zustand
-- **API**: Supabase Edge Function (Deno + Hono) handling all REST endpoints
-- **Database**: Supabase PostgreSQL with RLS policies
+- **Frontend**: Angular 20, TypeScript, Angular Material, Standalone Components, Signals
+- **Backend**: Spring Boot 3.3, Java 21, Spring Security, JPA/Hibernate, JWT Auth
+- **Database**: MySQL 8 with auto-DDL
 - **Auth**: JWT-based authentication with Bearer token, role-based access control
+
+## Prerequisites
+
+- **Java 21** (JDK)
+- **Maven 3.9+**
+- **Node.js 18+** and npm
+- **Angular CLI 20** (`npm install -g @angular/cli@20`)
+- **MySQL 8** running on localhost:3306
 
 ## Quick Start
 
-### 1. Install Frontend Dependencies
+### 1. Set up MySQL Database
+
+```sql
+CREATE DATABASE IF NOT EXISTS paisaads;
+```
+
+Update `paisaads-backend/src/main/resources/application.yml` with your MySQL credentials:
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/paisaads?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+```
+
+### 2. Start the Spring Boot Backend
 
 ```bash
-cd frontend
-npm install --legacy-peer-deps
+cd paisaads-backend
+mvn spring-boot:run
 ```
 
-### 2. Configure Environment
+The API runs at http://localhost:8080/api. Seed data is auto-loaded on first startup.
 
-Create `frontend/.env.local`:
-
-```
-JWT_SECRET=paisaads-super-secret-jwt-key-2024
-NEXT_PUBLIC_API_URL=https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/paisaads-api
-```
-
-### 3. Run the Frontend
+### 3. Start the Angular Frontend
 
 ```bash
-cd frontend
-npm run dev
+cd paisaads-angular
+npm install
+ng serve
 ```
 
-The app runs at http://localhost:3000. The API is already deployed as a Supabase Edge Function -- no local backend needed.
+The app runs at http://localhost:4200.
 
 ## Test Accounts
 
@@ -54,20 +71,21 @@ The app runs at http://localhost:3000. The API is already deployed as a Supabase
 
 - `/` - Home page with featured ads
 - `/search` - Search and filter ads
+- `/search/results` - Search results
 - `/register` - Register new account
-- `/dashboard` - User dashboard (manage ads)
-- `/mgmt/dashboard` - Admin dashboard (review, approve, manage)
+- `/login` - Login page
+- `/dashboard` - User dashboard (my ads, post ad, profile)
+- `/admin` - Admin dashboard (review ads, users, categories, reports, configurations)
 - `/about-us`, `/contact`, `/faq`, `/privacy-policy`, `/terms-and-conditions` - Info pages
 
 ## API Endpoints
 
-The API is deployed at: `https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/paisaads-api/`
+The API runs at: `http://localhost:8080/api/`
 
 ### Auth
 - `POST /auth/login` - Login with phone + password
+- `POST /auth/register` - Register new user
 - `POST /auth/logout` - Logout
-- `POST /auth/send-otp` - Send OTP for viewer login
-- `POST /auth/verify-otp` - Verify OTP
 - `GET /auth/profile` - Get current user profile (Bearer token required)
 
 ### Ads
@@ -75,9 +93,10 @@ The API is deployed at: `https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/p
 - `GET /poster-ad/today` - Get published poster ads
 - `GET /video-ad/today` - Get published video ads
 - `POST /line-ad`, `POST /poster-ad`, `POST /video-ad` - Create ads (auth required)
-- `PATCH /line-ad/:id/approve` - Approve ad (admin)
+- `PATCH /line-ad/{id}/approve` - Approve ad (admin)
+- `PATCH /line-ad/{id}/reject` - Reject ad (admin)
 - `GET /line-ad/my-ads` - Get user's own ads (auth required)
-- `GET /line-ad/status/:status` - Get ads by status
+- `GET /line-ad/status/{status}` - Get ads by status
 
 ### Categories
 - `GET /categories/tree` - Get full category hierarchy
@@ -88,11 +107,12 @@ The API is deployed at: `https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/p
 - `GET /reports/*` - Various reporting endpoints
 
 ### Configurations
-- `GET /configurations/:key` - Get site configuration (faq, about-us, ad-pricing, etc.)
+- `GET /configurations/{key}` - Get site configuration (faq, about-us, ad-pricing, etc.)
+- `POST /configurations/{key}` - Update configuration (admin)
 
 ## Database Schema
 
-15 tables in Supabase PostgreSQL:
+15 tables in MySQL:
 
 - `user` - User accounts with roles
 - `admin`, `customer` - User profile tables
@@ -108,25 +128,42 @@ The API is deployed at: `https://vhlafnxhkalzwzlcbidq.supabase.co/functions/v1/p
 
 ```
 project/
-  frontend/           # Next.js 15 frontend application
+  paisaads-angular/        # Angular 20 frontend
     src/
-      app/            # App Router pages
-      components/     # React components (shadcn/ui based)
-      lib/            # API client, services, types, hooks
-    .env.local        # Environment variables
-  supabase/
-    functions/
-      paisaads-api/  # Edge Function API (Hono)
-  backend/           # Original NestJS backend (reference only)
+      app/
+        components/        # Shared components (navbar, footer)
+        models/            # TypeScript interfaces
+        pages/             # Page components (home, search, dashboard, admin)
+        services/          # HTTP services (auth, ad, category, config)
+        environments/      # Environment configs
+  paisaads-backend/        # Spring Boot 3 backend
+    src/main/java/com/paisaads/
+      config/              # Security, CORS, Web configs
+      controller/          # REST controllers
+      dto/                 # Data transfer objects
+      entity/              # JPA entities
+      enums/               # Java enums
+      repository/          # Spring Data JPA repositories
+      security/            # JWT utility and filter
+      service/             # Business logic services
+    src/main/resources/
+      application.yml      # Spring configuration
+      data.sql             # Seed data
 ```
 
-## Original Backend (Reference)
+## Building for Production
 
-The `backend/` directory contains the original NestJS backend. It requires PostgreSQL and MongoDB. In this deployment, the API has been re-implemented as a Supabase Edge Function for serverless operation. The original backend can still be run locally:
-
+### Frontend
 ```bash
-cd backend
-npm install
-# Configure .env with DB credentials
-npm run start:dev
+cd paisaads-angular
+ng build
+# Output in dist/paisaads-angular/
+```
+
+### Backend
+```bash
+cd paisaads-backend
+mvn package -DskipTests
+# Output jar in target/paisaads-backend-1.0.0.jar
+java -jar target/paisaads-backend-1.0.0.jar
 ```

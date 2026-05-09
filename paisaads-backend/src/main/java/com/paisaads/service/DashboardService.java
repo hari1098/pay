@@ -1,87 +1,104 @@
 package com.paisaads.service;
 
-import com.paisaads.dto.DashboardStats;
-import com.paisaads.entity.AdStatus;
-import com.paisaads.entity.Customer;
-import com.paisaads.repository.CustomerRepository;
-import com.paisaads.repository.LineAdRepository;
-import com.paisaads.repository.PosterAdRepository;
-import com.paisaads.repository.VideoAdRepository;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+import com.paisaads.enums.AdStatus;
+import com.paisaads.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 @Service
-@RequiredArgsConstructor
 public class DashboardService {
 
     private final LineAdRepository lineAdRepository;
     private final PosterAdRepository posterAdRepository;
     private final VideoAdRepository videoAdRepository;
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
 
-    private static final List<AdStatus> ACTIVE_STATUSES = Arrays.asList(
-            AdStatus.PUBLISHED, AdStatus.FOR_REVIEW
-    );
-
-    private static final List<AdStatus> PENDING_STATUSES = Arrays.asList(
-            AdStatus.PENDING, AdStatus.DRAFT, AdStatus.FOR_REVIEW
-    );
-
-    public DashboardStats getUserDashboard(UUID userId) {
-        Customer customer = customerRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found"));
-
-        UUID customerId = customer.getId();
-
-        long totalLineAds = lineAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted()).size();
-        long totalPosterAds = posterAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted()).size();
-        long totalVideoAds = videoAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted()).size();
-        long totalAds = totalLineAds + totalPosterAds + totalVideoAds;
-
-        long activeLineAds = lineAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted())
-                .stream().filter(ad -> ACTIVE_STATUSES.contains(ad.getStatus())).count();
-        long activePosterAds = posterAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted())
-                .stream().filter(ad -> ACTIVE_STATUSES.contains(ad.getStatus())).count();
-        long activeVideoAds = videoAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted())
-                .stream().filter(ad -> ACTIVE_STATUSES.contains(ad.getStatus())).count();
-        long activeAds = activeLineAds + activePosterAds + activeVideoAds;
-
-        long pendingLineAds = lineAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted())
-                .stream().filter(ad -> PENDING_STATUSES.contains(ad.getStatus())).count();
-        long pendingPosterAds = posterAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted())
-                .stream().filter(ad -> PENDING_STATUSES.contains(ad.getStatus())).count();
-        long pendingVideoAds = videoAdRepository.findByCustomerId(customerId, org.springframework.data.domain.Sort.unsorted())
-                .stream().filter(ad -> PENDING_STATUSES.contains(ad.getStatus())).count();
-        long pendingAds = pendingLineAds + pendingPosterAds + pendingVideoAds;
-
-        return new DashboardStats(totalAds, activeAds, pendingAds, 0L);
+    public DashboardService(LineAdRepository lineAdRepository,
+                            PosterAdRepository posterAdRepository,
+                            VideoAdRepository videoAdRepository,
+                            UserRepository userRepository) {
+        this.lineAdRepository = lineAdRepository;
+        this.posterAdRepository = posterAdRepository;
+        this.videoAdRepository = videoAdRepository;
+        this.userRepository = userRepository;
     }
 
-    public DashboardStats getGlobalDashboard() {
+    public Map<String, Object> getUserDashboard(UUID customerId) {
+        Map<String, Object> stats = new HashMap<>();
+
+        long totalLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED)
+                + lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.FOR_REVIEW)
+                + lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.DRAFT)
+                + lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.REJECTED)
+                + lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.ON_HOLD);
+
+        long activeLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED);
+        long draftLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.DRAFT);
+        long reviewLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.FOR_REVIEW);
+        long rejectedLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.REJECTED);
+        long onHoldLineAds = lineAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.ON_HOLD);
+
+        long totalPosterAds = posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED)
+                + posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.FOR_REVIEW)
+                + posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.DRAFT)
+                + posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.REJECTED)
+                + posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.ON_HOLD);
+
+        long activePosterAds = posterAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED);
+
+        long totalVideoAds = videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED)
+                + videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.FOR_REVIEW)
+                + videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.DRAFT)
+                + videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.REJECTED)
+                + videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.ON_HOLD);
+
+        long activeVideoAds = videoAdRepository.countByCustomerIdAndStatus(customerId, AdStatus.PUBLISHED);
+
+        stats.put("totalAds", totalLineAds + totalPosterAds + totalVideoAds);
+        stats.put("activeAds", activeLineAds + activePosterAds + activeVideoAds);
+        stats.put("draftAds", draftLineAds);
+        stats.put("reviewAds", reviewLineAds);
+        stats.put("rejectedAds", rejectedLineAds);
+        stats.put("onHoldAds", onHoldLineAds);
+        stats.put("lineAds", totalLineAds);
+        stats.put("posterAds", totalPosterAds);
+        stats.put("videoAds", totalVideoAds);
+
+        return stats;
+    }
+
+    public Map<String, Object> getGlobalDashboard() {
+        Map<String, Object> stats = new HashMap<>();
+
+        long totalUsers = userRepository.count();
         long totalLineAds = lineAdRepository.count();
         long totalPosterAds = posterAdRepository.count();
         long totalVideoAds = videoAdRepository.count();
-        long totalAds = totalLineAds + totalPosterAds + totalVideoAds;
 
-        long activeLineAds = lineAdRepository.findByIsActiveTrueAndStatusIn(
-                ACTIVE_STATUSES, org.springframework.data.domain.Sort.unsorted()).size();
-        long activePosterAds = posterAdRepository.findByIsActiveTrueAndStatusIn(
-                ACTIVE_STATUSES, org.springframework.data.domain.Sort.unsorted()).size();
-        long activeVideoAds = videoAdRepository.findByIsActiveTrueAndStatusIn(
-                ACTIVE_STATUSES, org.springframework.data.domain.Sort.unsorted()).size();
-        long activeAds = activeLineAds + activePosterAds + activeVideoAds;
+        long publishedLineAds = lineAdRepository.countByStatus(AdStatus.PUBLISHED);
+        long publishedPosterAds = posterAdRepository.countByStatus(AdStatus.PUBLISHED);
+        long publishedVideoAds = videoAdRepository.countByStatus(AdStatus.PUBLISHED);
 
-        long pendingLineAds = lineAdRepository.findByStatus(AdStatus.PENDING).size()
-                + lineAdRepository.findByStatus(AdStatus.DRAFT).size();
-        long pendingPosterAds = posterAdRepository.findByStatus(AdStatus.PENDING).size()
-                + posterAdRepository.findByStatus(AdStatus.DRAFT).size();
-        long pendingVideoAds = videoAdRepository.findByStatus(AdStatus.PENDING).size()
-                + videoAdRepository.findByStatus(AdStatus.DRAFT).size();
-        long pendingAds = pendingLineAds + pendingPosterAds + pendingVideoAds;
+        long reviewLineAds = lineAdRepository.countByStatus(AdStatus.FOR_REVIEW);
+        long reviewPosterAds = posterAdRepository.countByStatus(AdStatus.FOR_REVIEW);
+        long reviewVideoAds = videoAdRepository.countByStatus(AdStatus.FOR_REVIEW);
 
-        return new DashboardStats(totalAds, activeAds, pendingAds, 0L);
+        long rejectedLineAds = lineAdRepository.countByStatus(AdStatus.REJECTED);
+        long rejectedPosterAds = posterAdRepository.countByStatus(AdStatus.REJECTED);
+        long rejectedVideoAds = videoAdRepository.countByStatus(AdStatus.REJECTED);
+
+        stats.put("totalUsers", totalUsers);
+        stats.put("totalAds", totalLineAds + totalPosterAds + totalVideoAds);
+        stats.put("publishedAds", publishedLineAds + publishedPosterAds + publishedVideoAds);
+        stats.put("reviewAds", reviewLineAds + reviewPosterAds + reviewVideoAds);
+        stats.put("rejectedAds", rejectedLineAds + rejectedPosterAds + rejectedVideoAds);
+        stats.put("lineAds", totalLineAds);
+        stats.put("posterAds", totalPosterAds);
+        stats.put("videoAds", totalVideoAds);
+
+        return stats;
     }
 }

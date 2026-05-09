@@ -1,30 +1,39 @@
 package com.paisaads.service;
 
-import com.paisaads.dto.AuthResponse;
 import com.paisaads.dto.LoginRequest;
+import com.paisaads.dto.LoginResponse;
 import com.paisaads.dto.RegisterRequest;
+import com.paisaads.dto.UserProfileDto;
 import com.paisaads.entity.Customer;
 import com.paisaads.entity.User;
-import com.paisaads.entity.UserRole;
+import com.paisaads.enums.Role;
 import com.paisaads.repository.CustomerRepository;
 import com.paisaads.repository.UserRepository;
-import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+import com.paisaads.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
+
+    public AuthService(UserRepository userRepository,
+                       CustomerRepository customerRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Transactional
-    public AuthResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
                 .orElseThrow(() -> new RuntimeException("Invalid phone number or password"));
 
@@ -32,38 +41,75 @@ public class AuthService {
             throw new RuntimeException("Invalid phone number or password");
         }
 
-        String token = jwtService.generateToken(user);
-        return new AuthResponse(token, user);
+        if (!user.getIsActive()) {
+            throw new RuntimeException("Account is deactivated");
+        }
+
+        String token = jwtUtil.generateToken(
+                user.getId().toString(),
+                user.getPhoneNumber(),
+                user.getRole().name()
+        );
+
+        UserProfileDto userProfile = toUserProfileDto(user);
+
+        return new LoginResponse(token, userProfile);
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public LoginResponse register(RegisterRequest request) {
         if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
             throw new RuntimeException("Phone number already registered");
         }
 
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already registered");
+        }
+
         User user = new User();
         user.setName(request.getName());
+        user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail());
-        user.setRole(UserRole.USER);
-        user.setActive(true);
-        user.setPhoneVerified(false);
+        user.setRole(Role.USER);
+        user.setIsActive(true);
         user.setEmailVerified(false);
+        user.setPhoneVerified(false);
 
-        User savedUser = userRepository.save(user);
+        user = userRepository.save(user);
 
+        // Create customer record
         Customer customer = new Customer();
-        customer.setUser(savedUser);
+        customer.setUser(user);
         customerRepository.save(customer);
 
-        String token = jwtService.generateToken(savedUser);
-        return new AuthResponse(token, savedUser);
+        String token = jwtUtil.generateToken(
+                user.getId().toString(),
+                user.getPhoneNumber(),
+                user.getRole().name()
+        );
+
+        UserProfileDto userProfile = toUserProfileDto(user);
+
+        return new LoginResponse(token, userProfile);
     }
 
-    public User getProfile(UUID userId) {
-        return userRepository.findById(userId)
+    public UserProfileDto getProfile(String userId) {
+        User user = userRepository.findById(java.util.UUID.fromString(userId))
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        return toUserProfileDto(user);
+    }
+
+    private UserProfileDto toUserProfileDto(User user) {
+        return new UserProfileDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getRole(),
+                user.getIsActive(),
+                user.getEmailVerified(),
+                user.getPhoneVerified()
+        );
     }
 }
