@@ -1,6 +1,0 @@
-export enum PositionType {
-  LEFT_SIDE = 'LEFT_SIDE',
-  RIGHT_SIDE = 'RIGHT_SIDE',
-  CENTER_TOP = 'CENTER_TOP',
-  CENTER_BOTTOM = 'CENTER_BOTTOM',
-}

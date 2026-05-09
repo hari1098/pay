@@ -1,169 +1,142 @@
 # PaisaAds - Advertisement Platform
 
-A full-stack classified ads platform for posting and browsing advertisements across multiple categories. Supports three ad types: Line Ads (text), Poster Ads (image), and Video Ads.
+A full-stack classified ads platform for posting and browsing advertisements. Modern tech stack with Angular 20 frontend and Spring Boot 3 backend.
 
-## Architecture
-
-```
-Frontend (Angular 20 + TypeScript)  -->  Backend (Spring Boot 3 + Java 21)  -->  MySQL
-        :4200                                      :8080
-```
+## Tech Stack
 
 - **Frontend**: Angular 20, TypeScript, Angular Material, Standalone Components, Signals
 - **Backend**: Spring Boot 3.3, Java 21, Spring Security, JPA/Hibernate, JWT Auth
-- **Database**: MySQL 8 with auto-DDL
-- **Auth**: JWT-based authentication with Bearer token, role-based access control
+- **Database**: H2 (in-memory for dev) or MySQL 8 (production)
 
-## Prerequisites
+## Project Structure
 
-- **Java 21** (JDK)
-- **Maven 3.9+**
-- **Node.js 18+** and npm
-- **Angular CLI 20** (`npm install -g @angular/cli@20`)
-- **MySQL 8** running on localhost:3306
+```
+paisaads-angular/       # Angular 20 frontend
+  src/
+    app/
+      components/       # Shared navbar, footer
+      models/          # TypeScript interfaces
+      pages/           # Route components
+      services/        # HTTP, Auth, Ad, Category, Config
+      environments/    # API URL config
 
-## Quick Start
-
-### 1. Set up MySQL Database
-
-```sql
-CREATE DATABASE IF NOT EXISTS paisaads;
+paisaads-backend/       # Spring Boot backend (reference: use mock API for preview)
+  pom.xml              # Maven configuration with H2 database
+  src/main/java/
+    config/            # Security, CORS, Web
+    controller/        # REST endpoints
+    entity/            # JPA entities
+    repository/        # Spring Data repositories
+    service/           # Business logic
+    security/          # JWT utilities
 ```
 
-Update `paisaads-backend/src/main/resources/application.yml` with your MySQL credentials:
+## Quick Start - For Preview
+
+### 1. Start Mock API Server
+```bash
+node /tmp/mock-api.js &
+# or
+npm run dev-api
+```
+Runs at http://localhost:8080 with sample data
+
+### 2. Start Angular Frontend
+```bash
+cd paisaads-angular
+npm install --legacy-peer-deps
+npx ng serve
+```
+Runs at http://localhost:4200
+
+### 3. Open Preview
+Visit http://localhost:4200 in your browser
+
+## Features
+
+- **Home Page** - Hero section, category pills, line ads grid, featured cards
+- **Search** - Filter ads by category, state, city
+- **Authentication** - Phone/password login, JWT token-based
+- **User Dashboard** - View my ads, post new ads, edit profile
+- **Admin Dashboard** - Review/approve ads, manage users, categories, reports, configurations
+- **Info Pages** - About Us, Contact, FAQ, Privacy, Terms & Conditions
+
+## API Endpoints (Mock)
+
+- `GET /api/line-ad/today` - Published line ads
+- `GET /api/poster-ad/today` - Published poster ads
+- `GET /api/video-ad/today` - Published video ads
+- `GET /api/categories/tree` - Category hierarchy
+- `GET /api/configurations/{key}` - Site config (about-us, faq, etc.)
+- `POST /api/auth/login` - User login
+- `GET /api/auth/profile` - User profile
+
+## For Production - Spring Boot Backend
+
+### Prerequisites
+- Java 21 (JDK)
+- Maven 3.9+
+- MySQL 8
+
+### Setup MySQL
+```sql
+CREATE DATABASE paisaads;
+```
+
+### Update Backend Config
+Edit `paisaads-backend/src/main/resources/application.yml`:
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/paisaads?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/paisaads
     username: root
-    password: root
+    password: your-password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
 ```
 
-### 2. Start the Spring Boot Backend
-
+### Run Backend
 ```bash
 cd paisaads-backend
-mvn spring-boot:run
+mvn clean package -DskipTests
+java -jar target/paisaads-backend-1.0.0.jar
 ```
+Runs at http://localhost:8080/api
 
-The API runs at http://localhost:8080/api. Seed data is auto-loaded on first startup.
-
-### 3. Start the Angular Frontend
-
+### Run Frontend (Production Build)
 ```bash
 cd paisaads-angular
-npm install
-ng serve
+npm run build
+# Serve dist/paisaads-angular with any HTTP server
+npx http-server dist/paisaads-angular -p 4200
 ```
 
-The app runs at http://localhost:4200.
-
-## Test Accounts
+## Test Accounts (Backend)
 
 | Phone | Password | Role |
 |-------|----------|------|
 | 9999999999 | password123 | SUPER_ADMIN |
-| 8888888888 | password123 | USER (Customer) |
+| 8888888888 | password123 | USER |
 | 7777777777 | password123 | EDITOR |
 | 6666666666 | password123 | REVIEWER |
 
 ## Key Pages
 
-- `/` - Home page with featured ads
-- `/search` - Search and filter ads
-- `/search/results` - Search results
-- `/register` - Register new account
-- `/login` - Login page
-- `/dashboard` - User dashboard (my ads, post ad, profile)
-- `/admin` - Admin dashboard (review ads, users, categories, reports, configurations)
+- `/` - Home
+- `/search` - Search page
+- `/search/results` - Results
+- `/register` - Register
+- `/login` - Login
+- `/dashboard` - User dashboard (auth required)
+- `/admin` - Admin dashboard (auth required)
 - `/about-us`, `/contact`, `/faq`, `/privacy-policy`, `/terms-and-conditions` - Info pages
-
-## API Endpoints
-
-The API runs at: `http://localhost:8080/api/`
-
-### Auth
-- `POST /auth/login` - Login with phone + password
-- `POST /auth/register` - Register new user
-- `POST /auth/logout` - Logout
-- `GET /auth/profile` - Get current user profile (Bearer token required)
-
-### Ads
-- `GET /line-ad/today` - Get published line ads
-- `GET /poster-ad/today` - Get published poster ads
-- `GET /video-ad/today` - Get published video ads
-- `POST /line-ad`, `POST /poster-ad`, `POST /video-ad` - Create ads (auth required)
-- `PATCH /line-ad/{id}/approve` - Approve ad (admin)
-- `PATCH /line-ad/{id}/reject` - Reject ad (admin)
-- `GET /line-ad/my-ads` - Get user's own ads (auth required)
-- `GET /line-ad/status/{status}` - Get ads by status
-
-### Categories
-- `GET /categories/tree` - Get full category hierarchy
-
-### Dashboard & Reports
-- `GET /ad-dashboard/user` - User dashboard stats (auth required)
-- `GET /ad-dashboard/global` - Global dashboard stats
-- `GET /reports/*` - Various reporting endpoints
-
-### Configurations
-- `GET /configurations/{key}` - Get site configuration (faq, about-us, ad-pricing, etc.)
-- `POST /configurations/{key}` - Update configuration (admin)
 
 ## Database Schema
 
-15 tables in MySQL:
+**Entities**: User, Admin, Customer, MainCategory, CategoryOne, CategoryTwo, CategoryThree, LineAd, PosterAd, VideoAd, Image, Payment, AdComment, AdPosition, Otp
 
-- `user` - User accounts with roles
-- `admin`, `customer` - User profile tables
-- `otp` - One-time passwords for verification
-- `main_category`, `category_one`, `category_two`, `category_three` - 4-level category hierarchy
-- `line_ad`, `poster_ad`, `video_ad` - Advertisement tables
-- `image` - Uploaded images
-- `payment` - Payment records
-- `ad_comment` - Review/approval comments
-- `ad_position` - Ad placement positions
-
-## Project Structure
-
-```
-project/
-  paisaads-angular/        # Angular 20 frontend
-    src/
-      app/
-        components/        # Shared components (navbar, footer)
-        models/            # TypeScript interfaces
-        pages/             # Page components (home, search, dashboard, admin)
-        services/          # HTTP services (auth, ad, category, config)
-        environments/      # Environment configs
-  paisaads-backend/        # Spring Boot 3 backend
-    src/main/java/com/paisaads/
-      config/              # Security, CORS, Web configs
-      controller/          # REST controllers
-      dto/                 # Data transfer objects
-      entity/              # JPA entities
-      enums/               # Java enums
-      repository/          # Spring Data JPA repositories
-      security/            # JWT utility and filter
-      service/             # Business logic services
-    src/main/resources/
-      application.yml      # Spring configuration
-      data.sql             # Seed data
-```
-
-## Building for Production
-
-### Frontend
-```bash
-cd paisaads-angular
-ng build
-# Output in dist/paisaads-angular/
-```
-
-### Backend
-```bash
-cd paisaads-backend
-mvn package -DskipTests
-# Output jar in target/paisaads-backend-1.0.0.jar
-java -jar target/paisaads-backend-1.0.0.jar
-```
+**Relationships**: 4-level category hierarchy, User has many Ads, Ads linked to Categories and Positions
